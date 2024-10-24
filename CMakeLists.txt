@@ -48,13 +48,17 @@ set(PYTHON_INSTALL_DIR "${SP_DIR}/readdy" CACHE PATH "Installation directory rel
 # test configuration
 set(READDY_CREATE_TEST_TARGET ON CACHE BOOL "Determines if the test target should be added.")
 set(READDY_INSTALL_UNIT_TEST_EXECUTABLE OFF CACHE BOOL "Determines if the unit test executable should be installed. Requires the cache variable READDY_CREATE_TEST_TARGET to be ON.")
-set(READDY_KERNELS_TO_TEST "SingleCPU,CPU,MPI" CACHE STRING "Variable holding which kernels should be tested in the core library.")
-set(READDY_INSTALL_HEADERS OFF CACHE BOOL "Whether to install header files")
+#set(READDY_KERNELS_TO_TEST "SingleCPU,CPU,MPI" CACHE STRING "Variable holding which kernels should be tested in the core library.")
+set(READDY_KERNELS_TO_TEST "SingleCPU,CPU" CACHE STRING "Variable holding which kernels should be tested in the core library.")
+set(READDY_INSTALL_HEADERS ON CACHE BOOL "Whether to install header files")
 
 # decide if api wrappers are being generated
 set(READDY_BUILD_PYTHON_WRAPPER ON CACHE BOOL "Build Python wrappers")
-set(READDY_DEBUG_PYTHON_MODULES OFF CACHE BOOL "If this flag is set to ON, the compiled python modules get installed directly into the source tree.")
+#set(READDY_DEBUG_PYTHON_MODULES OFF CACHE BOOL "If this flag is set to ON, the compiled python modules get installed directly into the source tree.")
 set(READDY_DEBUG_CONDA_ROOT_DIR "" CACHE PATH "This only does something, if READDY_DEBUG_PYTHON_MODULES is set to ON. Then, it compiles the readdy libraries into the @conda@/lib directory.")
+
+set(READDY_DEBUG_PYTHON_MODULES ON CACHE BOOL "If this flag is set to ON, the compiled python modules get installed directly into the source tree.")
+#set(READDY_DEBUG_CONDA_ROOT_DIR ON CACHE PATH "This only does something, if READDY_DEBUG_PYTHON_MODULES is set to ON. Then, it compiles the readdy libraries into the @conda@/lib directory.")
 
 # documentation target (make doc)
 set(READDY_GENERATE_DOCUMENTATION_TARGET OFF CACHE BOOL "Should generate target for documentation or not.")
@@ -78,15 +82,15 @@ set(READDY_BUILD_SCENARIOS OFF CACHE BOOL "Whether to build the Scenarios execut
 cmake_minimum_required(VERSION 3.16)
 
 # run conan
-include(${CMAKE_SOURCE_DIR}/cmake/Conan.cmake)
-run_conan()
-if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake")
-    include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
-    conan_basic_setup(TARGETS)
-else()
-    message(STATUS "no conanbuildinfo.cmake was generated, continue and see if packages can be found
-                    using find_package regardless")
-endif()
+#include(${CMAKE_SOURCE_DIR}/cmake/Conan.cmake)
+#run_conan()
+#if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake")
+#    include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
+#    conan_basic_setup(TARGETS)
+#else()
+#    message(STATUS "no conanbuildinfo.cmake was generated, continue and see if packages can be found
+#                    using find_package regardless")
+#endif()
 
 # extend cmake module path to include readdy custom modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
