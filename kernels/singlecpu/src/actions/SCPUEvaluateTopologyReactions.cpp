@@ -348,7 +348,12 @@ bool SCPUEvaluateTopologyReactions::eventsDependent(const SCPUEvaluateTopologyRe
         return true;
     }
     auto tpWithSameP = evt1.topology_idx2 < 0 && evt2.topology_idx2 < 0 && evt1.idx2 == evt2.idx2;
-    if (tpWithSameP) return true;
+    if (tpWithSameP) {
+        if (!evt1.spatial && !evt2.spatial) {
+            return false;
+        }
+        return true;
+    }
     return evt1.topology_idx2 >= 0 &&
            (evt1.topology_idx2 == evt2.topology_idx || evt1.topology_idx2 == evt2.topology_idx2);
 }
