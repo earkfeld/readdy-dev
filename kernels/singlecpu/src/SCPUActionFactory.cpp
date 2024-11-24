@@ -47,6 +47,7 @@
 #include <readdy/kernel/singlecpu/actions/SCPUEvaluateCompartments.h>
 #include <readdy/kernel/singlecpu/actions/SCPUEvaluateTopologyReactions.h>
 #include <readdy/kernel/singlecpu/actions/SCPUBreakBonds.h>
+#include <readdy/kernel/singlecpu/actions/SCPUActionReaction.h>
 #include <readdy/kernel/singlecpu/actions/SCPUMiscActions.h>
 
 namespace core_actions = readdy::model::actions;
@@ -118,6 +119,11 @@ SCPUActionFactory::detailedBalance(scalar timeStep) const {
 std::unique_ptr<readdy::model::actions::top::BreakBonds>
 SCPUActionFactory::breakBonds(scalar timeStep, readdy::model::actions::top::BreakConfig config) const {
     return {std::make_unique<top::SCPUBreakBonds>(kernel, timeStep, config)};
+}
+
+std::unique_ptr<readdy::model::actions::top::ActionReaction>
+SCPUActionFactory::actionReaction(readdy::model::actions::top::ReactionConfig config) const {
+    return {std::make_unique<top::SCPUActionReaction>(kernel, config)};
 }
 
 std::unique_ptr<readdy::model::actions::EvaluateObservables> SCPUActionFactory::evaluateObservables() const {

@@ -561,4 +561,11 @@ top::EvaluateTopologyReactions::EvaluateTopologyReactions(scalar timeStep) : Tim
 top::BreakBonds::BreakBonds(scalar timeStep, BreakConfig breakConfig)
         : TimeStepDependentAction(timeStep), breakConfig(std::move(breakConfig)) {}
 
+//top::ActionReaction::ActionReaction(ReactionConfig reactionConfig)
+//        : Action(), reactionConfig(std::move(reactionConfig)) {}
+
+top::ActionReaction::ActionReaction(ReactionConfig reactionConfig)
+        : reactionConfig(std::move(reactionConfig)) {}
 }
+
+

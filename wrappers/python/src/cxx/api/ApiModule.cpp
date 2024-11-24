@@ -177,6 +177,10 @@ void exportApi(py::module &api) {
                 .def(py::init<>())
                 .def("add_breakable_pair", &readdy::model::actions::top::BreakConfig::addBreakablePair);
 
+        py::class_<readdy::model::actions::top::ReactionConfig>(actionsModule, "ReactionConfig")
+                .def(py::init<>())
+                .def("register_reaction", &readdy::model::actions::top::ReactionConfig::registerReaction);
+
         simulation
         .def("create_action_initialize_kernel", [](sim &self) -> std::unique_ptr<Action> { return self.actions().initializeKernel(); })
         .def("create_action_euler_bd", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().eulerBDIntegrator(timeStep); })
@@ -188,7 +192,8 @@ void exportApi(py::module &api) {
         .def("create_action_gillespie", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().gillespie(timeStep);})
         .def("create_action_detailed_balance", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().detailedBalance(timeStep);})
         .def("create_action_evaluate_topology_reactions", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().evaluateTopologyReactions(timeStep);})
-        .def("create_action_break_bonds", [](sim &self, readdy::scalar timeStep, const readdy::model::actions::top::BreakConfig &breakConfig) -> std::unique_ptr<Action> { return self.actions().breakBonds(timeStep, breakConfig);});
+        .def("create_action_break_bonds", [](sim &self, readdy::scalar timeStep, const readdy::model::actions::top::BreakConfig &breakConfig) -> std::unique_ptr<Action> { return self.actions().breakBonds(timeStep, breakConfig);})
+        .def("create_action_action_reaction", [](sim &self, const readdy::model::actions::top::ReactionConfig &reactionConfig) -> std::unique_ptr<Action> { return self.actions().actionReaction(reactionConfig);});
 
         // strictly not an action
         py::class_<EvalObs>(actionsModule, "EvaluateObservables").def("__call__", &EvalObs::perform);

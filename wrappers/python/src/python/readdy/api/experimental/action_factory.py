@@ -33,7 +33,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from readdy._internal.readdybinding.api.actions import BreakConfig as _BreakConfig
-
+from readdy._internal.readdybinding.api.actions import ReactionConfig as _ReactionConfig
 
 class BreakConfig(object):
     def __init__(self):
@@ -41,6 +41,14 @@ class BreakConfig(object):
 
     def add_breakable_pair(self, type1, type2, threshold_energy, rate):
         self._conf.add_breakable_pair(type1, type2, threshold_energy, rate)
+
+
+class ReactionConfig(object):
+    def __init__(self):
+        self._conf = _ReactionConfig()
+
+    def register_reaction(self, reaction_name):
+        self._conf.register_reaction(reaction_name)
 
 
 # todo some argument checking
@@ -77,6 +85,9 @@ class ActionFactory(object):
 
     def break_bonds(self, time_step, break_config):
         return self._sim.create_action_break_bonds(time_step, break_config._conf)
+
+    def action_reaction(self, reaction_config):
+        return self._sim.create_action_action_reaction(reaction_config._conf)
 
     def evaluate_observables(self):
         return self._sim.create_action_evaluate_observables()

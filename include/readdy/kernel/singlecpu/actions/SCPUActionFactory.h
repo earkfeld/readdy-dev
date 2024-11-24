@@ -90,6 +90,9 @@ public:
     std::unique_ptr<readdy::model::actions::top::BreakBonds>
     breakBonds(scalar timeStep, readdy::model::actions::top::BreakConfig config) const override;
 
+    std::unique_ptr<readdy::model::actions::top::ActionReaction>
+    actionReaction(readdy::model::actions::top::ReactionConfig config) const override;
+
     std::unique_ptr<readdy::model::actions::EvaluateObservables> evaluateObservables() const override;
 
     std::unique_ptr<readdy::model::actions::MakeCheckpoint>

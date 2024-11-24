@@ -1,14 +1,13 @@
 #!/bin/bash
 
 # Configuration
-PREFIX=~/miniforge3/envs/readdy2dev/
+PREFIX=~/miniforge3/envs/readdy2dev-action_reaction/
 PROJECT_ROOT=$(pwd)
 BUILD_TYPE="Debug"
 PY3K=1
 PY_VER="3.9"
 RDY_VER="2.0.13"
 RUN_UNIT_TESTS=false
-
 
 BUILD_DIR="build"
 CONAN_GEN_DIR="$BUILD_DIR/$BUILD_TYPE/generators"
