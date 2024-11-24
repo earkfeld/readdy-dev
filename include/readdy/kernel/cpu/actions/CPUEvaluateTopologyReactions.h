@@ -49,12 +49,52 @@
 #include <readdy/model/actions/Actions.h>
 #include "../CPUKernel.h"
 
+//namespace readdy::kernel::cpu::actions::top {
+//
+//class CPUEvaluateTopologyReactions : public readdy::model::actions::top::EvaluateTopologyReactions {
+//    using rate_t = readdy::model::top::GraphTopology::ReactionRate;
+//public:
+//    CPUEvaluateTopologyReactions(CPUKernel* kernel, readdy::scalar timeStep);
+//
+//    void perform() override;
+//
+//private:
+//    struct TREvent;
+//
+//    bool eventsDependent(const TREvent& evt1, const TREvent& evt2) const;
+//
+//    using topology_reaction_events = std::vector<TREvent>;
+//
+//    CPUKernel *const kernel;
+//
+//    topology_reaction_events gatherEvents();
+//
+//    bool topologyDeactivated(std::ptrdiff_t index) const;
+//
+//    void handleStructuralReactionEvent(CPUStateModel::topologies_vec &topologies,
+//                                       std::vector<CPUStateModel::topology> &new_topologies,
+//                                       const TREvent &event, CPUStateModel::topology_ref &topology) const;
+//
+//    void handleTopologyParticleReaction(CPUStateModel::topology_ref &topology, const TREvent &event);
+//
+//    void handleTopologyTopologyReaction(CPUStateModel::topology_ref &t1, CPUStateModel::topology_ref &t2,
+//                                        const TREvent& event);
+//};
+//
+//
+//}
+
+#pragma once
+
+#include <readdy/model/actions/Actions.h>
+#include "../CPUKernel.h"
+
 namespace readdy::kernel::cpu::actions::top {
 
 class CPUEvaluateTopologyReactions : public readdy::model::actions::top::EvaluateTopologyReactions {
     using rate_t = readdy::model::top::GraphTopology::ReactionRate;
 public:
-    CPUEvaluateTopologyReactions(CPUKernel* kernel, readdy::scalar timeStep);
+    CPUEvaluateTopologyReactions(CPUKernel* kernel, readdy::scalar timeStep, const std::vector<int>& reactionIds);
 
     void perform() override;
 
@@ -66,6 +106,9 @@ private:
     using topology_reaction_events = std::vector<TREvent>;
 
     CPUKernel *const kernel;
+
+//    std::vector<int> reactionIds;  // Stores the reaction IDs for evaluation
+    const std::vector<int> reactionIds;
 
     topology_reaction_events gatherEvents();
 
@@ -81,5 +124,7 @@ private:
                                         const TREvent& event);
 };
 
-
 }
+
+
+

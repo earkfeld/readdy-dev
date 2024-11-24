@@ -105,9 +105,15 @@ SCPUActionFactory::gillespie(scalar timeStep) const {
     return {std::make_unique<reactions::SCPUGillespie>(kernel, timeStep)};
 }
 
+//std::unique_ptr<readdy::model::actions::top::EvaluateTopologyReactions>
+//SCPUActionFactory::evaluateTopologyReactions(scalar timeStep) const {
+//    return {std::make_unique<top::SCPUEvaluateTopologyReactions>(kernel, timeStep)};
+//}
+
+// Modified version
 std::unique_ptr<readdy::model::actions::top::EvaluateTopologyReactions>
-SCPUActionFactory::evaluateTopologyReactions(scalar timeStep) const {
-    return {std::make_unique<top::SCPUEvaluateTopologyReactions>(kernel, timeStep)};
+SCPUActionFactory::evaluateTopologyReactions(scalar timeStep, const std::vector<int>& reactionIds) const {
+    return {std::make_unique<top::SCPUEvaluateTopologyReactions>(kernel, timeStep, reactionIds)};
 }
 
 std::unique_ptr<readdy::model::actions::reactions::DetailedBalance>

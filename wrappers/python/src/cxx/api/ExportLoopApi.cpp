@@ -88,7 +88,7 @@ void exportLoopApi(pybind11::module &module) {
             .def("run_evaluate_observables", &Loop::runEvaluateObservables)
             .def("run_integrator", &Loop::runIntegrator)
             .def("run_reactions", &Loop::runReactions)
-            .def("run_topology_reactions", &Loop::runTopologyReactions)
+            .def("run_topology_reactions", &Loop::runTopologyReactions
             .def("use_integrator", [](Loop &self, std::string name) {
                 self.useIntegrator(name, self.timeStep());
             })
@@ -105,9 +105,15 @@ void exportLoopApi(pybind11::module &module) {
                 self.reactionScheduler() = reactionScheduler;
             }, py::keep_alive<1, 2>())
             .def("write_config_to_file", &Loop::writeConfigToFile, py::return_value_policy::reference_internal, "file"_a)
-            .def("evaluate_topology_reactions", [](Loop &self, bool evaluate, py::object timeStep) {
-                self.evaluateTopologyReactions(evaluate, timeStep.is_none() ? self.timeStep() : timeStep.cast<readdy::scalar>());
-            }, "evaluate"_a, "timeStep"_a = py::none())
+//            .def("evaluate_topology_reactions", [](Loop &self, bool evaluate, py::object timeStep) {
+//                self.evaluateTopologyReactions(evaluate, timeStep.is_none() ? self.timeStep() : timeStep.cast<readdy::scalar>());
+//            }, "evaluate"_a, "timeStep"_a = py::none())
+
+            .def("evaluate_topology_reactions", [](Loop &self, bool evaluate, py::object timeStep, py::object reactionIds) {
+                self.evaluateTopologyReactions(evaluate, timeStep.is_none() ? self.timeStep() : timeStep.cast<readdy::scalar>(),
+                                               reactionIds.is_none() ? std::vector<int>() : reactionIds.cast<std::vector<int>>());
+            }, "evaluate"_a, "timeStep"_a = py::none(), "reactionIds"_a = py::none())
+
             .def("evaluate_observables", &Loop::evaluateObservables, "evaluate"_a)
             .def_property("neighbor_list_cutoff", [](const Loop &self) { return self.neighborListCutoff(); },
                           [](Loop &self, readdy::scalar distance) { self.neighborListCutoff() = distance; })

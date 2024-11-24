@@ -50,6 +50,7 @@ set(READDY_CREATE_TEST_TARGET ON CACHE BOOL "Determines if the test target shoul
 set(READDY_INSTALL_UNIT_TEST_EXECUTABLE OFF CACHE BOOL "Determines if the unit test executable should be installed. Requires the cache variable READDY_CREATE_TEST_TARGET to be ON.")
 #set(READDY_KERNELS_TO_TEST "SingleCPU,CPU,MPI" CACHE STRING "Variable holding which kernels should be tested in the core library.")
 set(READDY_KERNELS_TO_TEST "SingleCPU,CPU" CACHE STRING "Variable holding which kernels should be tested in the core library.")
+#set(READDY_KERNELS_TO_TEST "" CACHE STRING "Variable holding which kernels should be tested in the core library.")
 set(READDY_INSTALL_HEADERS ON CACHE BOOL "Whether to install header files")
 
 # decide if api wrappers are being generated

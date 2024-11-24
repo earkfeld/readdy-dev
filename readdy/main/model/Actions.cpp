@@ -556,7 +556,10 @@ void AddParticles::perform() {
 
 CalculateForces::CalculateForces() : Action() {}
 
-top::EvaluateTopologyReactions::EvaluateTopologyReactions(scalar timeStep) : TimeStepDependentAction(timeStep) {}
+//top::EvaluateTopologyReactions::EvaluateTopologyReactions(scalar timeStep) : TimeStepDependentAction(timeStep) {}
+// Modified version
+top::EvaluateTopologyReactions::EvaluateTopologyReactions(scalar timeStep, const std::vector<int>& reactionIds)
+    : TimeStepDependentAction(timeStep) {}
 
 top::BreakBonds::BreakBonds(scalar timeStep, BreakConfig breakConfig)
         : TimeStepDependentAction(timeStep), breakConfig(std::move(breakConfig)) {}

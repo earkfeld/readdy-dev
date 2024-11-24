@@ -117,7 +117,9 @@ public:
     virtual std::unique_ptr<reactions::DetailedBalance>
     detailedBalance(scalar timeStep) const = 0;
 
-    virtual std::unique_ptr<top::EvaluateTopologyReactions> evaluateTopologyReactions(scalar timeStep) const = 0;
+//    virtual std::unique_ptr<top::EvaluateTopologyReactions> evaluateTopologyReactions(scalar timeStep) const = 0;
+    // Modified version
+    virtual std::unique_ptr<top::EvaluateTopologyReactions> evaluateTopologyReactions(scalar timeStep, const std::vector<int>& reactionIds) const = 0;
 
     virtual std::unique_ptr<top::BreakBonds> breakBonds(scalar timeStep, top::BreakConfig config) const = 0;
 

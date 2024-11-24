@@ -96,8 +96,64 @@ public:
      * @param kernel the kernel
      * @param timeStep the time step width
      */
-    explicit SimulationLoop(model::Kernel *const kernel, scalar timeStep)
-            : _kernel(kernel), _timeStep(timeStep),
+//    explicit SimulationLoop(model::Kernel *const kernel, scalar timeStep)
+//            : _kernel(kernel), _timeStep(timeStep),
+//              _initializeKernel(kernel->actions().initializeKernel().release()),
+//              _integrator(kernel->actions().eulerBDIntegrator(timeStep).release()),
+//              _compartments(kernel->actions().evaluateCompartments().release()),
+//              _reactions(
+//                      kernel->supportsGillespie() ?
+//                      static_cast<readdy::model::actions::TimeStepDependentAction *>(
+//                              kernel->actions().gillespie(timeStep).release()) :
+//                      static_cast<readdy::model::actions::TimeStepDependentAction *>(
+//                              kernel->actions().uncontrolledApproximation(timeStep).release())),
+//              _forces(kernel->actions().calculateForces().release()),
+//              _initNeighborList(kernel->actions().createNeighborList(kernel->context().calculateMaxCutoff()).release()),
+//              _updateNeighborList(kernel->actions().updateNeighborList().release()),
+//              _clearNeighborList(kernel->actions().clearNeighborList().release()),
+//              _topologyReactions(kernel->supportsTopologies() ?
+//                                 kernel->actions().evaluateTopologyReactions(timeStep).release() : nullptr) {}
+
+// Modified version 1
+//    explicit SimulationLoop(model::Kernel *const kernel, scalar timeStep, const std::vector<int>& reactionIds)
+//        : _kernel(kernel), _timeStep(timeStep),
+//          _initializeKernel(kernel->actions().initializeKernel().release()),
+//          _integrator(kernel->actions().eulerBDIntegrator(timeStep).release()),
+//          _compartments(kernel->actions().evaluateCompartments().release()),
+//          _reactions(
+//                  kernel->supportsGillespie() ?
+//                  static_cast<readdy::model::actions::TimeStepDependentAction *>(
+//                          kernel->actions().gillespie(timeStep).release()) :
+//                  static_cast<readdy::model::actions::TimeStepDependentAction *>(
+//                          kernel->actions().uncontrolledApproximation(timeStep).release())),
+//          _forces(kernel->actions().calculateForces().release()),
+//          _initNeighborList(kernel->actions().createNeighborList(kernel->context().calculateMaxCutoff()).release()),
+//          _updateNeighborList(kernel->actions().updateNeighborList().release()),
+//          _clearNeighborList(kernel->actions().clearNeighborList().release()),
+//          _topologyReactions(kernel->supportsTopologies() ?
+//                             kernel->actions().evaluateTopologyReactions(timeStep, reactionIds).release() : nullptr) {}
+
+// Modified version 2
+//    explicit SimulationLoop(model::Kernel *const kernel, scalar timeStep, const std::vector<int>& reactionIds = {})
+//            : _kernel(kernel), _timeStep(timeStep), _reactionIds(reactionIds),
+//              _initializeKernel(kernel->actions().initializeKernel().release()),
+//              _integrator(kernel->actions().eulerBDIntegrator(timeStep).release()),
+//              _compartments(kernel->actions().evaluateCompartments().release()),
+//              _reactions(
+//                      kernel->supportsGillespie() ?
+//                      static_cast<readdy::model::actions::TimeStepDependentAction *>(
+//                              kernel->actions().gillespie(timeStep).release()) :
+//                      static_cast<readdy::model::actions::TimeStepDependentAction *>(
+//                              kernel->actions().uncontrolledApproximation(timeStep).release())),
+//              _forces(kernel->actions().calculateForces().release()),
+//              _initNeighborList(kernel->actions().createNeighborList(kernel->context().calculateMaxCutoff()).release()),
+//              _updateNeighborList(kernel->actions().updateNeighborList().release()),
+//              _clearNeighborList(kernel->actions().clearNeighborList().release()),
+//              _topologyReactions(kernel->supportsTopologies() ?
+//                                 kernel->actions().evaluateTopologyReactions(timeStep, reactionIds).release() : nullptr) {}
+
+ explicit SimulationLoop(model::Kernel *const kernel, scalar timeStep, const std::vector<int>& reactionIds = {})
+            : _kernel(kernel), _timeStep(timeStep), _reactionIds(reactionIds),
               _initializeKernel(kernel->actions().initializeKernel().release()),
               _integrator(kernel->actions().eulerBDIntegrator(timeStep).release()),
               _compartments(kernel->actions().evaluateCompartments().release()),
@@ -112,7 +168,7 @@ public:
               _updateNeighborList(kernel->actions().updateNeighborList().release()),
               _clearNeighborList(kernel->actions().clearNeighborList().release()),
               _topologyReactions(kernel->supportsTopologies() ?
-                                 kernel->actions().evaluateTopologyReactions(timeStep).release() : nullptr) {}
+                                 kernel->actions().evaluateTopologyReactions(timeStep, reactionIds).release() : nullptr) {}
 
     /**
      * This function gives access to an progressCallback function that gets called every 100 time steps if one is
@@ -203,11 +259,41 @@ public:
     void useReactionScheduler(const std::string &name, scalar timeStep = -1) {
         _reactions = _kernel->actions().createReactionScheduler(name, timeStep > 0 ? timeStep : _timeStep);
     }
+// Original version
+//    void evaluateTopologyReactions(bool evaluate, scalar timeStep = -1) {
+//        _topologyReactions = evaluate ? _kernel->actions().evaluateTopologyReactions(
+//                timeStep > 0 ? timeStep : _timeStep) : nullptr;
+//    }
 
-    void evaluateTopologyReactions(bool evaluate, scalar timeStep = -1) {
+// Modified version 1
+//    void evaluateTopologyReactions(bool evaluate, scalar timeStep = -1, const std::vector<int>& reactionIds = {}) {
+//    _topologyReactions = evaluate ? _kernel->actions().evaluateTopologyReactions(
+//                                       timeStep > 0 ? timeStep : _timeStep, reactionIds).release()
+//                                  : nullptr;
+//    }
+
+// Modified version 2
+//    void evaluateTopologyReactions(bool evaluate, scalar timeStep = -1, const std::vector<int>& reactionIds = {}) {
+//        _topologyReactions = evaluate ? _kernel->actions().evaluateTopologyReactions(
+//                                           timeStep > 0 ? timeStep : _timeStep, reactionIds).release()
+//                                       : nullptr;
+//    }
+
+//    void evaluateTopologyReactions(bool evaluate, scalar timeStep = -1, const std::vector<int>& reactionIds = {}) {
+//        _topologyReactions = evaluate
+//        ? std::shared_ptr<readdy::model::actions::top::EvaluateTopologyReactions>(
+//              _kernel->actions().evaluateTopologyReactions(
+//                  timeStep > 0 ? timeStep : _timeStep, reactionIds).release())
+//        : nullptr;
+//    }
+
+    void evaluateTopologyReactions(bool evaluate, scalar timeStep = -1, std::vector<int> reactionIds = {}) {
         _topologyReactions = evaluate ? _kernel->actions().evaluateTopologyReactions(
-                timeStep > 0 ? timeStep : _timeStep) : nullptr;
+                timeStep > 0 ? timeStep : _timeStep,
+                reactionIds ) : nullptr;
     }
+
+
 
     void evaluateObservables(bool evaluate) {
         _evaluateObservables = evaluate;
@@ -331,6 +417,15 @@ public:
     scalar timeStep() const {
         return _timeStep;
     }
+// Attempt 1
+//    const std::vector<int>& reactionIds() const {
+//        return reactionIds;
+//    }
+
+// Attempt 2
+    const std::vector<int>& reactionIds() const {
+        return _reactionIds;
+    }
 
     model::Kernel *const kernel() {
         return _kernel;
@@ -375,6 +470,31 @@ public:
         return description;
     }
 
+//protected:
+//    model::Kernel *const _kernel;
+//    std::shared_ptr<model::actions::InitializeKernel> _initializeKernel{nullptr};
+//    std::shared_ptr<model::actions::TimeStepDependentAction> _integrator{nullptr};
+//    std::shared_ptr<model::actions::EvaluateCompartments> _compartments{nullptr};
+//    std::shared_ptr<model::actions::Action> _forces{nullptr};
+//    std::shared_ptr<model::actions::TimeStepDependentAction> _reactions{nullptr};
+//    std::shared_ptr<model::actions::CreateNeighborList> _initNeighborList{nullptr};
+//    std::shared_ptr<model::actions::UpdateNeighborList> _updateNeighborList{nullptr};
+//    std::shared_ptr<model::actions::top::EvaluateTopologyReactions> _topologyReactions{nullptr};
+//    std::shared_ptr<model::actions::ClearNeighborList> _clearNeighborList{nullptr};
+//    std::shared_ptr<model::actions::MakeCheckpoint> _makeCheckpoint{nullptr};
+//    std::shared_ptr<h5rd::Group> configGroup{nullptr};
+//
+//    bool _evaluateObservables = true;
+//    TimeStep _start = 0;
+//    std::size_t _progressOutputStride = 100;
+//    std::size_t _checkpointingStride = 10000;
+//    std::function<void(TimeStep)> _progressCallback;
+//    scalar _timeStep;
+//
+//    std::vector<std::function<void(TimeStep)>> _callbacks;
+//};
+
+// === Modified version === //
 protected:
     model::Kernel *const _kernel;
     std::shared_ptr<model::actions::InitializeKernel> _initializeKernel{nullptr};
@@ -389,6 +509,7 @@ protected:
     std::shared_ptr<model::actions::MakeCheckpoint> _makeCheckpoint{nullptr};
     std::shared_ptr<h5rd::Group> configGroup{nullptr};
 
+    std::vector<int> _reactionIds;  // Stores the reaction IDs for evaluation
     bool _evaluateObservables = true;
     TimeStep _start = 0;
     std::size_t _progressOutputStride = 100;

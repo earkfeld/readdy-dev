@@ -47,6 +47,55 @@
 namespace readdy {
 namespace testing {
 
+// === Original version === //
+//class FakeActionFactory : public readdy::model::actions::ActionFactory {
+//public:
+//    std::unique_ptr<model::actions::AddParticles>
+//    addParticles(const std::vector<model::Particle> &particles) const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::EulerBDIntegrator> eulerBDIntegrator(scalar timeStep) const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<readdy::model::actions::CalculateForces> calculateForces() const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::CreateNeighborList> createNeighborList(scalar interactionDistance) const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::UpdateNeighborList> updateNeighborList() const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::ClearNeighborList> clearNeighborList() const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::EvaluateCompartments> evaluateCompartments() const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::reactions::UncontrolledApproximation>
+//    uncontrolledApproximation(scalar timeStep) const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::reactions::Gillespie>
+//    gillespie(scalar timeStep) const override {
+//        return nullptr;
+//    }
+//
+//    std::unique_ptr<model::actions::top::EvaluateTopologyReactions>
+//    evaluateTopologyReactions(scalar timeStep) const override {
+//        return nullptr;
+//    }
+//};
+
+// === Modified version === //
 class FakeActionFactory : public readdy::model::actions::ActionFactory {
 public:
     std::unique_ptr<model::actions::AddParticles>
@@ -89,10 +138,11 @@ public:
     }
 
     std::unique_ptr<model::actions::top::EvaluateTopologyReactions>
-    evaluateTopologyReactions(scalar timeStep) const override {
+    evaluateTopologyReactions(scalar timeStep, const std::vector<int>& reactionIds = {}) const override {
         return nullptr;
     }
 };
+
 
 }
 }

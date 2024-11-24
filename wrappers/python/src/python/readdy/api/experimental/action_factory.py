@@ -72,8 +72,12 @@ class ActionFactory(object):
     def reaction_handler_detailed_balance(self, time_step):
         return self._sim.create_action_detailed_balance(time_step)
 
-    def topology_reaction_handler(self, time_step):
-        return self._sim.create_action_evaluate_topology_reactions(time_step)
+    # def topology_reaction_handler(self, time_step):
+    #     return self._sim.create_action_evaluate_topology_reactions(time_step)
+
+    # Modified version
+    def topology_reaction_handler(self, time_step, reaction_ids):
+        return self._sim.create_action_evaluate_topology_reactions(time_step, reaction_ids)
 
     def break_bonds(self, time_step, break_config):
         return self._sim.create_action_break_bonds(time_step, break_config._conf)

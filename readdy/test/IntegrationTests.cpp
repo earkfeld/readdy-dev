@@ -224,7 +224,7 @@ TEMPLATE_TEST_CASE("Chain-decay integration test", "[.integration]", SingleCPU, 
     {
         auto integrator = kernel->actions().createIntegrator("EulerBDIntegrator", 1e-2);
         auto forces = kernel->actions().calculateForces();
-        auto topReactions = kernel->actions().evaluateTopologyReactions(1e-2);
+        auto topReactions = kernel->actions().evaluateTopologyReactions(1e-2, {});
         auto reactions = kernel->actions().uncontrolledApproximation(1e-2);
 
         std::size_t time = 0;

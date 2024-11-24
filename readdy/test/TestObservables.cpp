@@ -172,7 +172,7 @@ TEMPLATE_TEST_CASE("Test observables", "[observables]", SingleCPU, CPU) {
         {
             auto integrator = kernel->actions().createIntegrator("EulerBDIntegrator", 1.0);
             auto forces = kernel->actions().calculateForces();
-            auto topReactions = kernel->actions().evaluateTopologyReactions(1.0);
+            auto topReactions = kernel->actions().evaluateTopologyReactions(1.0, {});
 
             std::size_t time = 0;
             std::size_t n_time_steps = 500;

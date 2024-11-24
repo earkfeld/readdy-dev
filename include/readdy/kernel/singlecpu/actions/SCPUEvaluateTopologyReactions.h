@@ -48,12 +48,48 @@
 #include <readdy/model/actions/Actions.h>
 #include <readdy/kernel/singlecpu/SCPUKernel.h>
 
+// === Original version === //
+//namespace readdy::kernel::scpu::actions::top {
+//
+//class SCPUEvaluateTopologyReactions : public readdy::model::actions::top::EvaluateTopologyReactions {
+//    using rate_t = readdy::model::top::GraphTopology::ReactionRate;
+//public:
+//    SCPUEvaluateTopologyReactions(SCPUKernel* kernel, scalar timeStep);
+//
+//    void perform() override;
+//
+//private:
+//    struct TREvent;
+//    using topology_reaction_events = std::vector<TREvent>;
+//
+//    SCPUKernel *const kernel;
+//
+//    topology_reaction_events gatherEvents();
+//
+//    bool topologyDeactivated(std::size_t index) const;
+//
+//    bool eventsDependent(const TREvent& evt1, const TREvent& evt2) const;
+//
+//    void handleStructuralReactionEvent(SCPUStateModel::topologies_vec &topologies,
+//                                       std::vector<SCPUStateModel::topology> &new_topologies,
+//                                       const TREvent &event, SCPUStateModel::topology_ref &topology) const;
+//
+//    void handleTopologyParticleReaction(SCPUStateModel::topology_ref &topology, const TREvent &event);
+//
+//    void handleTopologyTopologyReaction(SCPUStateModel::topology_ref &t1, SCPUStateModel::topology_ref &t2,
+//                                        const TREvent& event);
+//
+//};
+//
+//}
+
+// === Modified version === //
 namespace readdy::kernel::scpu::actions::top {
 
 class SCPUEvaluateTopologyReactions : public readdy::model::actions::top::EvaluateTopologyReactions {
     using rate_t = readdy::model::top::GraphTopology::ReactionRate;
 public:
-    SCPUEvaluateTopologyReactions(SCPUKernel* kernel, scalar timeStep);
+    SCPUEvaluateTopologyReactions(SCPUKernel* kernel, scalar timeStep, const std::vector<int>& reactionIds);
 
     void perform() override;
 
@@ -62,6 +98,8 @@ private:
     using topology_reaction_events = std::vector<TREvent>;
 
     SCPUKernel *const kernel;
+
+    std::vector<int> reactionIds;  // Stores the reaction IDs to be evaluated
 
     topology_reaction_events gatherEvents();
 
@@ -77,7 +115,6 @@ private:
 
     void handleTopologyTopologyReaction(SCPUStateModel::topology_ref &t1, SCPUStateModel::topology_ref &t2,
                                         const TREvent& event);
-
 };
 
-}
+}  // namespace readdy::kernel::scpu::actions::top

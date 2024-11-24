@@ -180,11 +180,22 @@ protected:
 
 namespace top {
 
+//class EvaluateTopologyReactions : public TimeStepDependentAction {
+//public:
+//    explicit EvaluateTopologyReactions(scalar timeStep);
+//
+//    ~EvaluateTopologyReactions() override = default;
+//};
+
+// Modified version
 class EvaluateTopologyReactions : public TimeStepDependentAction {
 public:
-    explicit EvaluateTopologyReactions(scalar timeStep);
+    explicit EvaluateTopologyReactions(scalar timeStep, const std::vector<int>& reactionIds);
 
     ~EvaluateTopologyReactions() override = default;
+
+private:
+    std::vector<int> reactionIds;  // Stores the vector of reaction IDs
 };
 
 class BreakConfig {
@@ -436,6 +447,7 @@ getActionName(typename std::enable_if<std::is_base_of<reactions::DetailedBalance
     return "DetailedBalance";
 }
 
+// Unmodified original
 template<typename T>
 std::string
 getActionName(typename std::enable_if<std::is_base_of<top::EvaluateTopologyReactions, T>::value>::type * = 0) {

@@ -72,8 +72,16 @@ struct SCPUEvaluateTopologyReactions::TREvent {
 
 };
 
-SCPUEvaluateTopologyReactions::SCPUEvaluateTopologyReactions(SCPUKernel *const kernel, scalar timeStep)
-        : EvaluateTopologyReactions(timeStep), kernel(kernel) {}
+// === Original version === //
+//SCPUEvaluateTopologyReactions::SCPUEvaluateTopologyReactions(SCPUKernel *const kernel, scalar timeStep)
+//        : EvaluateTopologyReactions(timeStep), kernel(kernel) {}
+
+// === Modified version === //
+//SCPUEvaluateTopologyReactions::SCPUEvaluateTopologyReactions(SCPUKernel *const kernel, scalar timeStep, const std::vector<int>& reactionIds)
+//        : EvaluateTopologyReactions(timeStep), kernel(kernel), reactionIds(reactionIds) {}
+
+SCPUEvaluateTopologyReactions::SCPUEvaluateTopologyReactions(SCPUKernel* const kernel, scalar timeStep, const std::vector<int>& reactionIds)
+        : EvaluateTopologyReactions(timeStep, reactionIds), kernel(kernel) {}
 
 template<bool approximated>
 bool performReactionEvent(const scalar rate, const scalar timeStep) {
@@ -165,6 +173,185 @@ void SCPUEvaluateTopologyReactions::perform() {
 
 }
 
+// Original version
+//SCPUEvaluateTopologyReactions::topology_reaction_events SCPUEvaluateTopologyReactions::gatherEvents() {
+//    const auto &context = kernel->context();
+//    const auto &topology_registry = context.topologyRegistry();
+//    topology_reaction_events events;
+//    {
+//        rate_t current_cumulative_rate = 0;
+//        std::size_t topology_idx = 0;
+//        for (auto &top : kernel->getSCPUKernelStateModel().topologies()) {
+//            if (!top->isDeactivated()) {
+//                std::size_t reaction_idx = 0;
+//                for (const auto &reaction : topology_registry.structuralReactionsOf(top->type())) {
+//                    TREvent event{};
+//                    event.rate = top->rates().at(reaction_idx);
+//                    event.cumulativeRate = event.rate + current_cumulative_rate;
+//                    current_cumulative_rate = event.cumulativeRate;
+//                    event.topology_idx = topology_idx;
+//                    event.reaction_idx = reaction_idx;
+//                    event.reactionId = reaction.id();
+//
+//                    events.push_back(event);
+//                    ++reaction_idx;
+//                }
+//            }
+//            ++topology_idx;
+//        }
+//
+//
+//        if (!topology_registry.spatialReactionRegistry().empty()) {
+//            const auto &box = context.boxSize().data();
+//            const auto &pbc = context.periodicBoundaryConditions().data();
+//            const auto &stateModel = kernel->getSCPUKernelStateModel();
+//            const auto &data = *stateModel.getParticleData();
+//            const auto &nl = *stateModel.getNeighborList();
+//            auto &topologies = stateModel.topologies();
+//
+//            for (auto cell = 0_z; cell < nl.nCells(); ++cell) {
+//                for (auto it = nl.particlesBegin(cell); it != nl.particlesEnd(cell); ++it) {
+//                    auto pidx = *it;
+//                    auto &entry = data.entry_at(pidx);
+//                    const auto tidx1 = entry.topology_index;
+//                    if (entry.deactivated || (tidx1 >= 0 && topologyDeactivated(static_cast<std::size_t>(tidx1)))) {
+//                        continue;
+//                    }
+//                    TopologyTypeId tt1 =
+//                            tidx1 >= 0 ? stateModel.topologies().at(static_cast<std::size_t>(tidx1))->type()
+//                                       : static_cast<TopologyTypeId>(-1);
+//
+//                    nl.forEachNeighbor(it, cell, [&](std::size_t neighborIdx) {
+//                        auto &neighbor = data.entry_at(neighborIdx);
+//                        if (!neighbor.deactivated) {
+//                            const auto tidx2 = neighbor.topology_index;
+//
+//                            if (tidx2 >= 0 && topologyDeactivated(static_cast<std::size_t>(tidx2))) {
+//                                return;
+//                            }
+//
+//                            TopologyTypeId tt2 =
+//                                    tidx2 >= 0 ? stateModel.topologies().at(static_cast<std::size_t>(tidx2))->type()
+//                                               : static_cast<TopologyTypeId>(-1);
+//                            if (tt1 == -1 && tt2 == -1) return;
+//                            const auto &reactions = topology_registry.spatialReactionsByType(entry.type, tt1,
+//                                                                                             neighbor.type, tt2);
+//                            const auto distSquared = bcs::distSquared(entry.pos, neighbor.pos, box, pbc);
+//                            std::size_t reaction_index = 0;
+//                            for (const auto &reaction : reactions) {
+//                                if (distSquared < reaction.radius() * reaction.radius()) {
+//                                    TREvent event{};
+//                                    event.reactionId = reaction.id();
+//                                    current_cumulative_rate = event.cumulativeRate;
+//                                    switch (reaction.mode()) {
+//                                        case readdy::model::top::reactions::STRMode::TT_FUSION:
+//                                            if (tidx1 >= 0 && tidx2 >= 0 && tidx1 != tidx2) {
+//                                                event.topology_idx = static_cast<std::size_t>(tidx1);
+//                                                event.topology_idx2 = tidx2;
+//                                                event.t1 = entry.type;
+//                                                event.t2 = neighbor.type;
+//                                                event.idx1 = pidx;
+//                                                event.idx2 = neighborIdx;
+//                                                event.reaction_idx = reaction_index;
+//                                                event.spatial = true;
+//                                                event.rate = reaction.rate(
+//                                                        *topologies.at(event.topology_idx),
+//                                                        *topologies.at(event.topology_idx2)
+//                                                );
+//                                                event.cumulativeRate = event.rate + current_cumulative_rate;
+//
+//
+//                                                events.push_back(event);
+//                                            }
+//                                            break;
+//                                        case readdy::model::top::reactions::STRMode::TT_ENZYMATIC:
+//                                            if (tidx1 >= 0 && tidx2 >= 0) {
+//                                                event.topology_idx = static_cast<std::size_t>(tidx1);
+//                                                event.topology_idx2 = tidx2;
+//                                                event.t1 = entry.type;
+//                                                event.t2 = neighbor.type;
+//                                                event.idx1 = pidx;
+//                                                event.idx2 = neighborIdx;
+//                                                event.reaction_idx = reaction_index;
+//                                                event.spatial = true;
+//                                                event.rate = reaction.rate(
+//                                                        *topologies.at(event.topology_idx),
+//                                                        *topologies.at(event.topology_idx2)
+//                                                );
+//                                                event.cumulativeRate = event.rate + current_cumulative_rate;
+//
+//                                                events.push_back(event);
+//                                            }
+//                                            break;
+//                                        case readdy::model::top::reactions::STRMode::TT_FUSION_ALLOW_SELF:
+//                                            if (tidx1 >= 0 && tidx2 >= 0) {
+//                                                if (tidx1 == tidx2) {
+//                                                    const auto &t1 = topologies.at(static_cast<std::size_t>(tidx1));
+//                                                    const auto &gr = t1->graph();
+//                                                    auto v1 = t1->vertexIteratorForParticle(pidx);
+//                                                    auto v2 = t1->vertexIteratorForParticle(neighborIdx);
+//                                                    auto d = gr.graphDistance(v1, v2);
+//                                                    if ((d != -1 && d <= reaction.min_graph_distance())
+//                                                         || (!context.legacyTopologySelfFusion() && d == 1)) {
+//                                                        break;
+//                                                    }
+//                                                }
+//                                                event.topology_idx = static_cast<std::size_t>(tidx1);
+//                                                event.topology_idx2 = tidx2;
+//                                                event.t1 = entry.type;
+//                                                event.t2 = neighbor.type;
+//                                                event.idx1 = pidx;
+//                                                event.idx2 = neighborIdx;
+//                                                event.reaction_idx = reaction_index;
+//                                                event.spatial = true;
+//                                                event.rate = reaction.rate(
+//                                                        *topologies.at(event.topology_idx),
+//                                                        *topologies.at(event.topology_idx2)
+//                                                );
+//                                                event.cumulativeRate = event.rate + current_cumulative_rate;
+//                                                events.push_back(event);
+//                                            }
+//                                            break;
+//                                        case readdy::model::top::reactions::STRMode::TP_ENZYMATIC: // fall through
+//                                        case readdy::model::top::reactions::STRMode::TP_FUSION:
+//                                            event.rate = reaction.rate();
+//                                            event.cumulativeRate = event.rate + current_cumulative_rate;
+//                                            if (tidx1 >= 0 && tidx2 < 0) {
+//                                                event.topology_idx = static_cast<std::size_t>(tidx1);
+//                                                event.t1 = entry.type;
+//                                                event.t2 = neighbor.type;
+//                                                event.idx1 = pidx;
+//                                                event.idx2 = neighborIdx;
+//                                                event.reaction_idx = reaction_index;
+//                                                event.spatial = true;
+//
+//                                                events.push_back(event);
+//                                            } else if (tidx1 < 0 && tidx2 >= 0) {
+//                                                event.topology_idx = static_cast<std::size_t>(tidx2);
+//                                                event.t1 = neighbor.type;
+//                                                event.t2 = entry.type;
+//                                                event.idx1 = neighborIdx;
+//                                                event.idx2 = pidx;
+//                                                event.reaction_idx = reaction_index;
+//                                                event.spatial = true;
+//
+//                                                events.push_back(event);
+//                                            }
+//                                            break;
+//                                    }
+//                                }
+//                                ++reaction_index;
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//        }
+//    }
+//    return events;
+//}
+
+// Modified version
 SCPUEvaluateTopologyReactions::topology_reaction_events SCPUEvaluateTopologyReactions::gatherEvents() {
     const auto &context = kernel->context();
     const auto &topology_registry = context.topologyRegistry();
@@ -172,10 +359,21 @@ SCPUEvaluateTopologyReactions::topology_reaction_events SCPUEvaluateTopologyReac
     {
         rate_t current_cumulative_rate = 0;
         std::size_t topology_idx = 0;
+
+        // Check if reactionIds is empty
+        const bool filterReactions = !reactionIds.empty();
+
         for (auto &top : kernel->getSCPUKernelStateModel().topologies()) {
             if (!top->isDeactivated()) {
                 std::size_t reaction_idx = 0;
                 for (const auto &reaction : topology_registry.structuralReactionsOf(top->type())) {
+                    // Filter based on reactionId if reactionIds is not empty
+                    if (filterReactions &&
+                        std::find(reactionIds.begin(), reactionIds.end(), reaction.id()) == reactionIds.end()) {
+                        ++reaction_idx;
+                        continue; // Skip this reaction if not in the list
+                    }
+
                     TREvent event{};
                     event.rate = top->rates().at(reaction_idx);
                     event.cumulativeRate = event.rate + current_cumulative_rate;
@@ -190,7 +388,6 @@ SCPUEvaluateTopologyReactions::topology_reaction_events SCPUEvaluateTopologyReac
             }
             ++topology_idx;
         }
-
 
         if (!topology_registry.spatialReactionRegistry().empty()) {
             const auto &box = context.boxSize().data();
@@ -230,6 +427,13 @@ SCPUEvaluateTopologyReactions::topology_reaction_events SCPUEvaluateTopologyReac
                             const auto distSquared = bcs::distSquared(entry.pos, neighbor.pos, box, pbc);
                             std::size_t reaction_index = 0;
                             for (const auto &reaction : reactions) {
+                                // Filter based on reactionId if reactionIds is not empty
+                                if (filterReactions &&
+                                    std::find(reactionIds.begin(), reactionIds.end(), reaction.id()) == reactionIds.end()) {
+                                    ++reaction_index;
+                                    continue; // Skip this reaction if not in the list
+                                }
+
                                 if (distSquared < reaction.radius() * reaction.radius()) {
                                     TREvent event{};
                                     event.reactionId = reaction.id();

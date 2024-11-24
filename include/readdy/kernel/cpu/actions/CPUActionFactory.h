@@ -77,8 +77,12 @@ public:
     std::unique_ptr<model::actions::reactions::DetailedBalance>
     detailedBalance(scalar timeStep) const override;
 
-    std::unique_ptr<model::actions::top::EvaluateTopologyReactions>
-    evaluateTopologyReactions(scalar timeStep) const override;
+//    std::unique_ptr<model::actions::top::EvaluateTopologyReactions>
+//    evaluateTopologyReactions(scalar timeStep) const override;
+
+// Modified version
+    std::unique_ptr<readdy::model::actions::top::EvaluateTopologyReactions>
+    evaluateTopologyReactions(scalar timeStep, const std::vector<int>& reactionIds) const override;
 
     std::unique_ptr<model::actions::top::BreakBonds>
     breakBonds(scalar timeStep, readdy::model::actions::top::BreakConfig config) const override;

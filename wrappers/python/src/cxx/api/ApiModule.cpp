@@ -187,7 +187,10 @@ void exportApi(py::module &api) {
         .def("create_action_uncontrolled_approximation", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().uncontrolledApproximation(timeStep);})
         .def("create_action_gillespie", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().gillespie(timeStep);})
         .def("create_action_detailed_balance", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().detailedBalance(timeStep);})
-        .def("create_action_evaluate_topology_reactions", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().evaluateTopologyReactions(timeStep);})
+//        .def("create_action_evaluate_topology_reactions", [](sim &self, readdy::scalar timeStep) -> std::unique_ptr<Action> { return self.actions().evaluateTopologyReactions(timeStep);})
+
+        // === Modified version === //
+        .def("create_action_evaluate_topology_reactions", [](sim &self, readdy::scalar timeStep, const std::vector<int>& reactionIds) -> std::unique_ptr<Action> { return self.actions().evaluateTopologyReactions(timeStep, reactionIds);})
         .def("create_action_break_bonds", [](sim &self, readdy::scalar timeStep, const readdy::model::actions::top::BreakConfig &breakConfig) -> std::unique_ptr<Action> { return self.actions().breakBonds(timeStep, breakConfig);});
 
         // strictly not an action

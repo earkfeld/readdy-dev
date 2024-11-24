@@ -40,9 +40,15 @@
  * @date 18.10.16
  */
 
+// TODO: Make independent of scpu kernel (if possible)
 #pragma once
 #include <readdy/kernel/singlecpu/actions/SCPUEvaluateCompartments.h>
 #include <readdy/kernel/cpu/CPUKernel.h>
+
+// Modified version
+//#pragma once
+//#include <readdy/model/actions/Actions.h>
+//#include <readdy/kernel/cpu/CPUKernel.h>
 
 namespace readdy {
 namespace kernel {
