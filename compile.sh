@@ -7,7 +7,7 @@ BUILD_TYPE="Debug"
 PY3K=1
 PY_VER="3.9"
 RDY_VER="2.0.13"
-RUN_UNIT_TESTS=false
+RUN_UNIT_TESTS=true
 
 BUILD_DIR="build"
 CONAN_GEN_DIR="$BUILD_DIR/$BUILD_TYPE/generators"
@@ -35,6 +35,8 @@ CMAKE_FLAGS=(
   "-DREADDY_GENERATE_DOCUMENTATION_TARGET:BOOL=OFF"
   "-DREADDY_BUILD_SHARED_COMBINED:BOOL=OFF"
   "-DSP_DIR=${SITE_PACKAGES_DIR}" # Site-packages directory
+#  "-DCMAKE_CXX_FLAGS_RELEASE=-03" # C++ optimization flags
+#  "-DCMAKE_C_FLAGS_RELEASE=-03"   # C optimization flags
 )
 
 # Uncomment to use clang instead of gcc
