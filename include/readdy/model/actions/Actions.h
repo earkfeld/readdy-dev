@@ -342,8 +342,8 @@ protected:
         return totalEnergyForEdge;
     }
 };
+
 // TODO: Write tests for this class
-// Multi-Reaction Implementation (V2 - pulling topologies from the registry when needed)
 class ReactionConfig {
 public:
     // Registers a new reaction
@@ -380,23 +380,43 @@ protected:
     void genericPerform(readdy::util::index_persistent_vector<TopologyRef> &topologies, Model &model, Kernel *kernel, ParticleData &particleData) {
         std::vector<readdy::model::top::GraphTopology> resultingTopologies;
         std::size_t topologyIdx = 0;
-
         auto registeredReactions = reactionConfig.getAllReactions();
-
         for (auto &top : topologies) {
-            auto availableReactions = kernel->context().topologyRegistry().structuralReactionsOf(top->type());
-
-            for (const auto &reaction: availableReactions) {
-                auto reactionName = reaction.name();
-
-                if (std::find(registeredReactions.begin(), registeredReactions.end(), reactionName) !=
-                    registeredReactions.end()) {
-//                    std::cout << "Reaction " << reactionName << " is registered!" << std::endl;
-                    executeStructuralReaction(topologies, resultingTopologies, top, reaction, topologyIdx, particleData,
-                                              kernel);
+            if (!top->isDeactivated()) {
+                auto availableReactions = kernel->context().topologyRegistry().structuralReactionsOf(top->type());
+                for (const auto &reaction: availableReactions) {
+                    std::cout << reaction.name() << std::endl;
+                }
+                for (const auto &reaction: availableReactions) {
+                    auto reactionName = reaction.name();
+                    if (std::find(registeredReactions.begin(), registeredReactions.end(), reactionName) !=
+                        registeredReactions.end()) {
+                        executeStructuralReaction(topologies, resultingTopologies, top, reaction, topologyIdx,
+                                                  particleData,
+                                                  kernel);
+                    }
                 }
             }
             ++topologyIdx;
+        }
+
+        const auto &context = kernel->context();
+        for (auto &&newTopology : resultingTopologies) {
+            if (!newTopology.isNormalParticle(*kernel)) {
+                // Update data for new topology
+                newTopology.updateReactionRates(
+                        context.topologyRegistry().structuralReactionsOf(newTopology.type()));
+                newTopology.configure();
+                model.insert_topology(std::move(newTopology));
+            } else {
+                // Removing the particle from the topology structure if it is not a topology particle
+                auto it = newTopology.graph().begin();
+                if (it == newTopology.graph().end()) {
+                    throw std::logic_error("(ActionReaction) Topology had no active particle!");
+                }
+                auto particleIndex = it->data().particleIndex;
+                model.getParticleData()->entry_at(particleIndex).topology_index = -1;
+            }
         }
     }
 };
