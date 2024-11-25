@@ -115,7 +115,7 @@ CPUActionFactory::breakBonds(scalar timeStep, readdy::model::actions::top::Break
     return {std::make_unique<top::CPUBreakBonds>(kernel, timeStep, config)};
 }
 
-std::unique_ptr<readdy::model::actions::top::ActionReaction>
+std::unique_ptr<model::actions::top::ActionReaction>
 CPUActionFactory::actionReaction(readdy::model::actions::top::ReactionConfig config) const {
     return {std::make_unique<top::CPUActionReaction>(kernel, config)};
 }

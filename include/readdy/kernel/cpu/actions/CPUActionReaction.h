@@ -23,7 +23,7 @@ public:
         auto &topologies = kernel->getCPUKernelStateModel().topologies();
         auto &model = kernel->getCPUKernelStateModel();
         auto &particleData = *(kernel->getCPUKernelStateModel().getParticleData());
-        genericPerform(kernel, topologies, model, particleData);
+        genericPerform(topologies, model, kernel, particleData);
     }
 
 private:
