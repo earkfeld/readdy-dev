@@ -259,6 +259,7 @@ protected:
                     }
                     return std::move(recipe);
                 };
+//                std::cout << "(BB-PreExecution) Topology: " << top->type() << std::endl;
                 scalar rateDoesntMatter{1.};
                 readdy::model::top::reactions::StructuralTopologyReaction reaction("__internal_break_bonds",
                                                                                    reactionFunction, rateDoesntMatter);
@@ -385,12 +386,11 @@ protected:
             if (!top->isDeactivated()) {
                 auto availableReactions = kernel->context().topologyRegistry().structuralReactionsOf(top->type());
                 for (const auto &reaction: availableReactions) {
-                    std::cout << reaction.name() << std::endl;
-                }
-                for (const auto &reaction: availableReactions) {
                     auto reactionName = reaction.name();
                     if (std::find(registeredReactions.begin(), registeredReactions.end(), reactionName) !=
                         registeredReactions.end()) {
+//                        std::cout << "(AR-PreExecution) Topology: " << top->type() << ", Reaction: " << reactionName
+//                                  << std::endl;
                         executeStructuralReaction(topologies, resultingTopologies, top, reaction, topologyIdx,
                                                   particleData,
                                                   kernel);

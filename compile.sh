@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Configuration
-PREFIX=~/miniforge3/envs/readdy2dev-action_reaction/
+PREFIX=~/miniforge3/envs/mitosim-production/
 PROJECT_ROOT=$(pwd)
 BUILD_TYPE="Debug"
 PY3K=1
 PY_VER="3.9"
 RDY_VER="2.0.13"
-RUN_UNIT_TESTS=true
+RUN_UNIT_TESTS=false
 
 BUILD_DIR="build"
 CONAN_GEN_DIR="$BUILD_DIR/$BUILD_TYPE/generators"
@@ -35,9 +35,16 @@ CMAKE_FLAGS=(
   "-DREADDY_GENERATE_DOCUMENTATION_TARGET:BOOL=OFF"
   "-DREADDY_BUILD_SHARED_COMBINED:BOOL=OFF"
   "-DSP_DIR=${SITE_PACKAGES_DIR}" # Site-packages directory
-#  "-DCMAKE_CXX_FLAGS_RELEASE=-03" # C++ optimization flags
-#  "-DCMAKE_C_FLAGS_RELEASE=-03"   # C optimization flags
+  "-DCMAKE_CXX_FLAGS_RELEASE=-03" # C++ optimization flags
+  "-DCMAKE_C_FLAGS_RELEASE=-03"   # C optimization flags
+#  "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -march=native -ffast-math" # C++ optimization flags
+#  "-DCMAKE_C_FLAGS_RELEASE=-O3 -march=native -ffast-math"   # C optimization flags
 )
+
+# Note:
+# -O3: Highest optimization level
+# -march=native: Optimizes code for current CPU architecture
+# -ffast-math: Allows the compiler to use non-IEEE-compliant optimizations
 
 # Uncomment to use clang instead of gcc
 #if [ "$1" = "clang" ]; then

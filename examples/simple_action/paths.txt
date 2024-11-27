@@ -1,3 +1,0 @@
- READDY_INCLUDE_DIR="/home/earkfeld/miniforge3/envs/readdy2dev-action_reaction/include/python3.9"
- READDY_LIBRARY="/home/earkfeld/miniforge3/envs/readdy2dev-action_reaction/lib/libreaddy.so"
- READDY_CPU_LIBRARY="/home/earkfeld/miniforge3/envs/readdy2dev-action_reaction/include/readdy/kernel/cpu"
