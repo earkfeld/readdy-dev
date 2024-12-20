@@ -1,4 +1,4 @@
-name: readdy2dev
+name: readdy-dev
 channels:
   - conda-forge
 dependencies:
@@ -82,4 +82,4 @@ dependencies:
   - yaml=0.2.5=h7f98852_2
   - zlib=1.2.13=h4ab18f5_6
   - zstd=1.5.6=ha6fb4c9_0
-prefix: /home/earkfeld/miniforge3/envs/readdy2dev
+prefix: ~/miniforge3/envs/readdy-dev
