@@ -232,6 +232,11 @@ if(READDY_INSTALL_HEADERS)
             FILES_MATCHING PATTERN "*.h*"
     )
     install (
+        DIRECTORY ${CMAKE_SOURCE_DIR}/kernels/singlecpu/include/
+        DESTINATION ${INSTALL_DIR}/include
+        FILES_MATCHING PATTERN "*.h*"
+    )
+    install (
             DIRECTORY ${CMAKE_SOURCE_DIR}/libraries/h5rd/include/
             DESTINATION ${INSTALL_DIR}/include
             FILES_MATCHING PATTERN "*.h*")

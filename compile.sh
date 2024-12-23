@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-PREFIX=~/miniforge3/envs/mitosim-production/
+PREFIX=~/miniforge3/envs/readdy2dev-mpi/
 PROJECT_ROOT=$(pwd)
 BUILD_TYPE="Debug"
 PY3K=1
