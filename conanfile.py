@@ -56,9 +56,14 @@ class ReaDDyRecipe(ConanFile):
         cmake_layout(self)
 
     def requirements(self):
+        # self.requires("spdlog/1.15.0")
+        # self.requires("nlohmann_json/3.11.3")
+        # self.requires("fmt/11.0.2")
+        ## ORIGINAL
         self.requires("spdlog/1.10.0")
         self.requires("nlohmann_json/3.10.3")
         self.requires("fmt/8.1.1")
+
         # self.requires("c-blosc/1.21.0")
         # self.requires("zlib/1.2.11")
         # self.requires("hdf5/1.14.5")
@@ -73,8 +78,6 @@ class ReaDDyRecipe(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
-        # Explicitly set the architecture to x86_64
-        # tc.variables["CMAKE_SYSTEM_PROCESSOR"] = "x86_64"
         tc.generate()
 
     def build(self):

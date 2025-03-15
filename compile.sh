@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Configuration
-PREFIX=~/miniforge3/envs/mitosim-production/
+PREFIX=/opt/homebrew/Caskroom/miniforge/base/envs/readdy-dev2
 PROJECT_ROOT=$(pwd)
 BUILD_TYPE="Debug"
 PY3K=1
-PY_VER="3.9"
+PY_VER="3.10"
 RDY_VER="2.0.13"
 RUN_UNIT_TESTS=false
 
@@ -41,18 +41,22 @@ CMAKE_FLAGS=(
 #  "-DCMAKE_C_FLAGS_RELEASE=-O3 -march=native -ffast-math"   # C optimization flags
 )
 
+#export HDF5_DIR=/opt/homebrew/Caskroom/miniforge/base/envs/readdy-dev2
+#export CFLAGS="-I/opt/homebrew/Caskroom/miniforge/base/envs/readdy-dev2/include"
+#export LDFLAGS="-L/opt/homebrew/Caskroom/miniforge/base/envs/readdy-dev2/lib -lhdf5"
+
 # Note:
 # -O3: Highest optimization level
 # -march=native: Optimizes code for current CPU architecture
 # -ffast-math: Allows the compiler to use non-IEEE-compliant optimizations
 
 # Uncomment to use clang instead of gcc
-#if [ "$1" = "clang" ]; then
-#    CMAKE_FLAGS+=("-DCMAKE_C_COMPILER=/usr/bin/clang")
-#    CMAKE_FLAGS+=("-DCMAKE_CXX_COMPILER=/usr/bin/clang++")
-#fi
+if [ "$1" = "clang" ]; then
+    CMAKE_FLAGS+=("-DCMAKE_C_COMPILER=/usr/bin/clang")
+    CMAKE_FLAGS+=("-DCMAKE_CXX_COMPILER=/usr/bin/clang++")
+fi
 
-export HDF5_ROOT=${PREFIX}
+export HDF5_ROOT="${CONDA_ROOT}"
 export PYTHON_INCLUDE_DIR=$("$PREFIX/bin/python" -c "import sysconfig; print(sysconfig.get_path('include'))")
 
 # Attempt to feed the correct Python library to FindPythonLibs
@@ -105,9 +109,10 @@ for flag in "${CMAKE_FLAGS[@]}"; do
     echo "   $flag"
 done
 
-cmake --clean-first "$PROJECT_ROOT" "${CMAKE_FLAGS[@]}"
+#cmake --clean-first "$PROJECT_ROOT" "${CMAKE_FLAGS[@]}"
+cmake "$PROJECT_ROOT" "${CMAKE_FLAGS[@]}"
 #cmake --build . --config "$BUILD_TYPE" --parallel "$CPU_COUNT"
-cmake --build . --config "$BUILD_TYPE" --parallel "$CPU_COUNT" --target install
+cmake --build . --config "$BUILD_TYPE" --target install
 
 # Run Tests
 if $RUN_UNIT_TESTS; then
@@ -156,11 +161,11 @@ fi
 #source ./$BUILD_TYPE/generators/deactivate_conanbuild.sh
 
 # Test Simulation
-cd ..
-if [ $1 ]; then
-  TEST_INDEX=$1
-  echo "Running test simulation"
-  python ./rxn_test_$TEST_INDEX.py
-fi
+#cd ..
+#if [ $1 ]; then
+#  TEST_INDEX=$1
+#  echo "Running test simulation"
+#  python ./rxn_test_$TEST_INDEX.py
+#fi
 
 # Done

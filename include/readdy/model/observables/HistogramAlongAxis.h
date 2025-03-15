@@ -46,7 +46,7 @@
 #pragma once
 
 #include <set>
-#include <readdy/io/BloscFilter.h>
+#include <readdy/io/Blosc2Filter.h>
 #include "Observable.h"
 
 namespace readdy::model::observables {
@@ -80,7 +80,7 @@ protected:
 
     unsigned int axis;
 
-    io::BloscFilter bloscFilter{};
+    io::Blosc2Filter bloscFilter{};
 };
 
 }

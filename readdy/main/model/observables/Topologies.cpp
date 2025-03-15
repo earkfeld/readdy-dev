@@ -98,7 +98,7 @@ std::string_view Topologies::type() const {
 
 void Topologies::initializeDataSet(File &file, const std::string &dataSetName, Stride flushStride) {
     auto group = file.createGroup(std::string(util::OBSERVABLES_GROUP_PATH) + "/" + dataSetName);
-    io::BloscFilter filter;
+    io::Blosc2Filter filter;
     h5rd::File::FilterConfiguration filters;
     if(useBlosc) filters.push_back(&filter);
     {

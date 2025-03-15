@@ -34,80 +34,84 @@
 
 
 /**
- * << detailed description >>
+ * This header file contains the definitions of the hdf5 blosc filter plugin for the h5rd wrapper api.
+ * Blosc is a meta compressor that speeds up the application of compression algorithms. More information can be found
+ * under http://blosc.org. This filter implementation is based on hdf5-blosc (https://github.com/Blosc/hdf5-blosc).
  *
- * @file BloscFilter.cpp
- * @brief << brief description >>
+ * @file Blosc2Filter.h
+ * @brief Definitions of the hdf5 blosc filter plugin for h5rd
  * @author clonker
  * @date 06.09.17
  * @copyright BSD-3
  */
 
+#pragma once
 
-#include "readdy/io/BloscFilter.h"
-#include "blosc_filter.h"
+#include <h5rd/h5rd.h>
+
+#include <readdy/common/common.h>
 
 namespace readdy::io {
 
+    class READDY_API Blosc2Filter : public h5rd::Filter {
+    public:
 
-bool BloscFilter::available() const {
-    return H5Zfilter_avail(FILTER_BLOSC) > 0;
-}
+    /**
+     * The available compressors.
+     */
+//    enum Compressor {
+//        BloscLZ, LZ4, LZ4HC, SNAPPY, ZLIB, ZSTD
+//    };
 
-void BloscFilter::activate(h5rd::PropertyList &plist) {
-    registerFilter();
-    unsigned int cd_values[7];
-    // compression level 0-9 (0 no compression, 9 highest compression)
-    cd_values[4] = compressionLevel;
-    // 0: shuffle not active, 1: shuffle active
-    cd_values[5] = shuffle ? 1 : 0;
-    // the compressor to use
-    switch (compressor) {
-        case BloscLZ: {
-            cd_values[6] = BLOSC_BLOSCLZ;
-            break;
-        }
-        case LZ4: {
-            cd_values[6] = BLOSC_LZ4;
-            break;
-        }
-        case LZ4HC: {
-            cd_values[6] = BLOSC_LZ4HC;
-            break;
-        }
-        case SNAPPY: {
-            cd_values[6] = BLOSC_SNAPPY;
-            break;
-        }
-        case ZLIB: {
-            cd_values[6] = BLOSC_ZLIB;
-            break;
-        }
-        case ZSTD: {
-            cd_values[6] = BLOSC_ZSTD;
-            break;
-        }
-    }
-    if (H5Pset_filter(plist.id(), FILTER_BLOSC, H5Z_FLAG_OPTIONAL, 7, cd_values) < 0) {
-        H5Eprint(H5Eget_current_stack(), stderr);
-        throw h5rd::Exception("Could not set blosc filter!");
-    }
-}
+    enum Compressor {
+        BloscLZ, LZ4, LZ4HC, ZLIB, ZSTD
+    };
 
-void BloscFilter::registerFilter() {
-    static std::atomic_bool initialized{false};
-    if (!initialized.load()) {
-        char *version, *date;
-        register_blosc(&version, &date);
-        log::debug("registered blosc with version {} ({})", version, date);
-        initialized = true;
-    }
-}
+    /**
+     * Creates a new Blosc2Filter instance.
+     * @param compressor the backing compressor to use, by default the blosc internal LZ4 implementation
+     * @param compressionLevel the compression level (0 is the lowest and 9 is the highest compression level)
+     * @param shuffle whether to perform bitshuffle
+     */
+    explicit Blosc2Filter(Compressor compressor = Compressor::BloscLZ, unsigned int compressionLevel = 9,
+    bool shuffle = true);
 
-BloscFilter::BloscFilter(BloscFilter::Compressor compressor, unsigned int compressionLevel, bool shuffle) : compressor(
-        compressor), compressionLevel(compressionLevel), shuffle(shuffle) {
-    if (compressionLevel > 9) {
-        throw std::invalid_argument("Blosc only allows compression levels ranging from 0 to 9.");
-    }
-}
+    /**
+     * default destructor
+     */
+    ~Blosc2Filter() override = default;
+
+    /**
+     * Checks whether this filter is available as hdf5 filter plugin
+     * @return true if it is available
+     */
+    bool available() const override;
+
+    /**
+     * Activates the filter for a data set and its corresponding property list upon creation.
+     * @param plist the property list
+     */
+    void activate(h5rd::PropertyList &plist) override;
+
+    /**
+     * Registers the filter plugin with hdf5
+     */
+    void registerFilter() override;
+
+    private:
+    /**
+     * whether to perform bit shuffle
+     */
+    bool shuffle;
+    /**
+     * the compressor to use
+     */
+    Compressor compressor;
+    /**
+     * 0 - no compression; 9 - maximal compression
+     */
+    unsigned int compressionLevel;
+
+};
+
 }

@@ -165,9 +165,8 @@ if (READDY_CREATE_TEST_TARGET)
     include(${CMAKE_CURRENT_LIST_DIR}/contrib/Catch2/extras/Catch.cmake)
     add_subdirectory(readdy_testing)
 else()
-    # disable testing if there was no submodule
+    # disable test target and test executable if there was no submodule
     SET(READDY_CREATE_TEST_TARGET OFF)
-    # no installation of test executable
     SET(READDY_INSTALL_UNIT_TEST_EXECUTABLE OFF)
 endif()
 
@@ -184,6 +183,7 @@ endif()
 
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
+#find_package(blosc REQUIRED)
 find_package(blosc REQUIRED)
 find_package(fmt REQUIRED)
 

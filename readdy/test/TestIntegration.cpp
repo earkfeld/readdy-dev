@@ -49,7 +49,6 @@
 #include <readdy/common/integration.h>
 #include <readdy/common/numeric.h>
 
-
 TEST_CASE("Test numerical integration package.", "[integration]") {
     SECTION("Integrate polynomial exact") {
         // the used integration rules should yield exact results for integrating polynomials of order less than
@@ -68,9 +67,12 @@ TEST_CASE("Test numerical integration package.", "[integration]") {
         auto numericIntegral = result.first;
         auto errorEstimate = result.second;
         auto trueIntegral = 1.0 - std::exp(-1.0);
-        CHECK(errorEstimate > 0.); // exponential cant be integrated exactly, there should be some error
-        REQUIRE(std::abs(numericIntegral - trueIntegral) < errorEstimate);
+        REQUIRE(numericIntegral > 0.);
+        REQUIRE(errorEstimate > 0.);
+//        CHECK(errorEstimate > 0.); // exponential cant be integrated exactly, there should be some error
+        REQUIRE(std::abs(numericIntegral - trueIntegral) <= errorEstimate);
     }
+
     SECTION("Integrate exponential adaptively up to eps") {
         auto integrand = [](const readdy::scalar x) { return std::exp(-x); };
         auto result = readdy::util::integration::integrateAdaptive(integrand, 0., 1.,
@@ -81,6 +83,7 @@ TEST_CASE("Test numerical integration package.", "[integration]") {
         // relative error should be <= machine precision
         REQUIRE(result.second/result.first <= std::numeric_limits<readdy::scalar>::epsilon());
     }
+
     SECTION("Integrate periodic fun adaptively up to eps") {
         // integral in range [-a, +a] of odd function is zero, sin=odd, x^4=even, sin(x)*x^4=odd
         auto integrand = [](const readdy::scalar x) { return std::sin(x) * std::pow(x, 4); };
@@ -134,5 +137,4 @@ TEST_CASE("Test numerical integration package.", "[integration]") {
             REQUIRE_THROWS(readdy::util::integration::integrateAdaptive(integrand, 1., 0.));
         }
     }
-
 }

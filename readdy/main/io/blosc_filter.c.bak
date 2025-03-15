@@ -148,7 +148,7 @@ size_t blosc_filter(unsigned flags, size_t cd_nelmts,
     int compcode;
     const char* compname = "blosclz";
 
-    blosc2_context* context = NULL;
+    blosc2_context* context;
 
     /* Filter params that are always set */
     typesize = (int32_t)cd_values[2];
@@ -160,13 +160,8 @@ size_t blosc_filter(unsigned flags, size_t cd_nelmts,
     cparams.clevel = clevel;
     cparams.filters[0] = doshuffle ? BLOSC_BITSHUFFLE : BLOSC_NOFILTER;
     context = blosc2_create_cctx(cparams);
-    if (!context) {
-        PUSH_ERR("blosc_filter", H5E_CALLBACK, "Failed to create Blosc context");
-        return 0;
-    }
 
     if (!(flags & H5Z_FLAG_REVERSE)) {
-        // Compress
         outbuf = malloc(outbuf_size);
         if (outbuf == NULL) {
             PUSH_ERR("blosc_filter", H5E_CALLBACK, "Can't allocate compression buffer");
@@ -179,8 +174,8 @@ size_t blosc_filter(unsigned flags, size_t cd_nelmts,
             goto failed;
         }
     } else {
-        // Decompress
         int32_t cbytes, blocksize;
+        free(outbuf);
         blosc2_cbuffer_sizes(*buf, &outbuf_size, &cbytes, &blocksize);
 
         outbuf = malloc(outbuf_size);
@@ -206,7 +201,7 @@ size_t blosc_filter(unsigned flags, size_t cd_nelmts,
 
     failed:
     free(outbuf);
-    if (context) blosc2_free_ctx(context);
+    blosc2_free_ctx(context);
     return 0;
 }
 

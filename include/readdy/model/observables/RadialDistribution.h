@@ -46,7 +46,7 @@
 #pragma once
 
 #include <vector>
-#include <readdy/io/BloscFilter.h>
+#include <readdy/io/Blosc2Filter.h>
 #include "Observable.h"
 
 namespace readdy::model::observables {
@@ -85,7 +85,7 @@ protected:
     std::vector<scalar> counts;
     std::vector<ParticleTypeId> typeCountFrom, typeCountTo;
     scalar particleToDensity;
-    io::BloscFilter bloscFilter;
+    io::Blosc2Filter bloscFilter;
 };
 
 }

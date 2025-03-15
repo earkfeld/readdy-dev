@@ -43,7 +43,7 @@
 #include <pybind11/stl.h>
 
 #include <readdy/common/ReaDDyVec3.h>
-#include <readdy/io/BloscFilter.h>
+#include <readdy/io/Blosc2Filter.h>
 #include <pybind11/numpy.h>
 #include "SpdlogPythonSink.h"
 #include "ReadableParticle.h"
@@ -95,7 +95,7 @@ void exportCommon(py::module& common) {
     }, "Function that sets the logging level. Possible arguments: \"trace\", \"debug\", \"info\", \"warn\", "
                        "\"err\", \"error\", \"critical\", \"off\".", "level"_a, "python_console_out"_a = true);
     common.def("register_blosc_hdf5_plugin", []() -> void {
-        readdy::io::BloscFilter filter;
+        readdy::io::Blosc2Filter filter;
         filter.registerFilter();
     });
     {

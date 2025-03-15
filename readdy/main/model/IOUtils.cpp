@@ -145,6 +145,8 @@ void writeReactionInformation(h5rd::Group &group, const Context &context) {
 
 void writeGeneralContextInformation(h5rd::Group &group, const Context &context) {
     json j;
+    std::cout << context.kBT() << std::endl;
+    std::cout << context.boxVolume() << std::endl;
     j["kbt"] = context.kBT();
     j["box_volume"] = context.boxVolume();
     j["box_size"] = context.boxSize();

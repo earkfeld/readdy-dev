@@ -117,7 +117,7 @@ void FlatTrajectory::initializeDataSet(File &file, const std::string &dataSetNam
         {
             h5rd::dimensions fs = {flushStride};
             h5rd::dimensions dims = {h5rd::UNLIMITED_DIMS};
-            io::BloscFilter filter;
+            io::Blosc2Filter filter;
             h5rd::File::FilterConfiguration filters;
             if(useBlosc) filters.push_back(&filter);
             pimpl->dataSet = group.createDataSet("records", fs, dims, std::get<0>(*pimpl->h5types),

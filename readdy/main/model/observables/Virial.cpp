@@ -53,7 +53,7 @@ namespace observables {
 struct Virial::Impl {
     std::unique_ptr<h5rd::DataSet> ds{nullptr};
     std::unique_ptr<util::TimeSeriesWriter> time{nullptr};
-    io::BloscFilter bloscFilter{};
+    io::Blosc2Filter bloscFilter{};
 };
 
 Virial::Virial(Kernel *kernel, Stride stride) : super(kernel, stride), pimpl(std::make_unique<Impl>()) {}

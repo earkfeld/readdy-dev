@@ -54,7 +54,7 @@ namespace observables {
 struct Energy::Impl {
     std::unique_ptr<h5rd::DataSet> ds{nullptr};
     std::unique_ptr<util::TimeSeriesWriter> time{nullptr};
-    io::BloscFilter bloscFilter{};
+    io::Blosc2Filter bloscFilter{};
 };
 
 Energy::Energy(Kernel *kernel, Stride stride) : Observable(kernel, stride), pimpl(std::make_unique<Impl>()) {}

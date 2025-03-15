@@ -34,10 +34,12 @@
 
 
 /**
- * << detailed description >>
+ * This header file contains the definitions of the hdf5 blosc filter plugin for the h5rd wrapper api.
+ * Blosc is a meta compressor that speeds up the application of compression algorithms. More information can be found
+ * under http://blosc.org. This filter implementation is based on hdf5-blosc (https://github.com/Blosc/hdf5-blosc).
  *
- * @file h5rd.h
- * @brief << brief description >>
+ * @file Blosc2Filter.h
+ * @brief Definitions of the hdf5 blosc filter plugin for h5rd
  * @author clonker
  * @date 06.09.17
  * @copyright BSD-3
@@ -45,12 +47,71 @@
 
 #pragma once
 
-#include "File.h"
-#include "Node.h"
-#include "Group.h"
-#include "DataSet.h"
-#include "VLENDataSet.h"
-#include "DataSetType.h"
-#include "DataSpace.h"
-#include "Filter.h"
-#include "PropertyList.h"
+#include <h5rd/h5rd.h>
+
+#include <readdy/common/common.h>
+
+namespace readdy::io {
+
+class READDY_API Blosc2Filter : public h5rd::Filter {
+public:
+
+    /**
+     * The available compressors.
+     */
+//    enum Compressor {
+//        BloscLZ, LZ4, LZ4HC, SNAPPY, ZLIB, ZSTD
+//    };
+
+    enum Compressor {
+        BloscLZ, LZ4, LZ4HC, ZLIB, ZSTD
+    };
+
+    /**
+     * Creates a new Blosc2Filter instance.
+     * @param compressor the backing compressor to use, by default the blosc internal LZ4 implementation
+     * @param compressionLevel the compression level (0 is the lowest and 9 is the highest compression level)
+     * @param shuffle whether to perform bitshuffle
+     */
+    explicit Blosc2Filter(Compressor compressor = Compressor::BloscLZ, unsigned int compressionLevel = 9,
+                         bool shuffle = true);
+
+    /**
+     * default destructor
+     */
+    ~Blosc2Filter() override = default;
+
+    /**
+     * Checks whether this filter is available as hdf5 filter plugin
+     * @return true if it is available
+     */
+    bool available() const override;
+
+    /**
+     * Activates the filter for a data set and its corresponding property list upon creation.
+     * @param plist the property list
+     */
+    void activate(h5rd::PropertyList &plist) override;
+
+    /**
+     * Registers the filter plugin with hdf5
+     */
+    void registerFilter() override;
+
+private:
+    /**
+     * whether to perform bit shuffle
+     */
+    bool shuffle;
+    /**
+     * the compressor to use
+     */
+    Compressor compressor;
+    /**
+     * 0 - no compression; 9 - maximal compression
+     */
+    unsigned int compressionLevel;
+
+};
+
+}

@@ -70,7 +70,7 @@ protected:
 
     std::unique_ptr<h5rd::DataSet> ds{nullptr};
     std::unique_ptr<rmou::TimeSeriesWriter> time{nullptr};
-    io::BloscFilter bloscFilter{};
+    io::Blosc2Filter bloscFilter{};
 };
 
 class MPIVirial : public readdy::model::observables::Virial {

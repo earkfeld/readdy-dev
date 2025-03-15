@@ -32,7 +32,7 @@ struct formatter<graphs::PersistentIndex> {
 
     template <typename FormatContext>
     auto format(const graphs::PersistentIndex &v, FormatContext &ctx) {
-        return format_to(ctx.out(), "PersistentIndex[{}]", v.value);
+        return fmt::format_to(ctx.out(), "PersistentIndex[{}]", v.value);
     }
 };
 }

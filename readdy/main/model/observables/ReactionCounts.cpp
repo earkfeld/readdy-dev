@@ -43,7 +43,7 @@
  * @copyright BSD-3
  */
 
-#include <readdy/io/BloscFilter.h>
+#include <readdy/io/Blosc2Filter.h>
 #include <readdy/model/observables/ReactionCounts.h>
 #include <readdy/model/Kernel.h>
 #include <readdy/model/observables/io/Types.h>
@@ -66,7 +66,7 @@ struct ReactionCounts::Impl {
     std::function<void(std::unique_ptr<h5rd::DataSet> &)> flushFun = [](std::unique_ptr<h5rd::DataSet> &value) {
         if(value) value->flush();
     };
-    io::BloscFilter bloscFilter {};
+    io::Blosc2Filter bloscFilter {};
 };
 
 ReactionCounts::ReactionCounts(Kernel *const kernel, Stride stride)

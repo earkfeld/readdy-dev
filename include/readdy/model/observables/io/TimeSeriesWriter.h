@@ -49,7 +49,7 @@
 #include <h5rd/h5rd.h>
 
 #include <readdy/common/common.h>
-#include <readdy/io/BloscFilter.h>
+#include <readdy/io/Blosc2Filter.h>
 
 namespace readdy::model::observables::util {
 
@@ -85,7 +85,7 @@ public:
     }
 
 private:
-    io::BloscFilter bloscFilter{};
+    io::Blosc2Filter bloscFilter{};
     std::unique_ptr<h5rd::DataSet> dataSet;
 };
 

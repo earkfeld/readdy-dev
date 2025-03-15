@@ -1,5 +1,6 @@
-find_path(blosc_INCLUDE_DIR NAMES blosc.h HINTS "${CMAKE_PREFIX_PATH}/include" DOC "The blosc include directory")
-find_library(blosc_LIBRARY NAMES blosc HINTS "${CMAKE_PREFIX_PATH}/lib" DOC "The blosc library")
+
+find_path(blosc_INCLUDE_DIR NAMES blosc2.h HINTS "${CMAKE_PREFIX_PATH}/include" DOC "The blosc include directory")
+find_library(blosc_LIBRARY NAMES blosc2 HINTS "${CMAKE_PREFIX_PATH}/lib" DOC "The blosc library")
 
 include(FindPackageHandleStandardArgs)
 

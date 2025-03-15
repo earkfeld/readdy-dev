@@ -56,7 +56,7 @@
 #include <readdy/model/observables/io/TrajectoryEntry.h>
 #include <readdy/model/observables/io/Types.h>
 #include <readdy/model/IOUtils.h>
-#include <readdy/io/BloscFilter.h>
+#include <readdy/io/Blosc2Filter.h>
 #include <readdy/model/reactions/ReactionRecord.h>
 #include <readdy/model/topologies/TopologyRecord.h>
 #include "ReadableReactionRecord.h"
@@ -70,7 +70,7 @@ py::tuple convert_readdy_viewer(const std::string &h5name, const std::string &tr
                                 std::size_t to, std::size_t stride) {
     readdy::log::debug(R"(converting "{}" to readdy viewer format)", h5name);
 
-    readdy::io::BloscFilter bloscFilter;
+    readdy::io::Blosc2Filter bloscFilter;
     bloscFilter.registerFilter();
 
     auto f = h5rd::File::open(h5name, h5rd::File::Flag::READ_ONLY);
@@ -168,7 +168,7 @@ convert_xyz(const std::string &h5name, const std::string &trajName, const std::s
             const std::array<readdy::scalar, 3> boxSize = std::array<readdy::scalar, 3>{{0.,0.,0.}}) {
     readdy::log::debug(R"(converting "{}" to "{}")", h5name, out);
 
-    readdy::io::BloscFilter bloscFilter;
+    readdy::io::Blosc2Filter bloscFilter;
     bloscFilter.registerFilter();
 
     auto f = h5rd::File::open(h5name, h5rd::File::Flag::READ_ONLY);
@@ -363,7 +363,7 @@ convert_xyz(const std::string &h5name, const std::string &trajName, const std::s
 
 std::vector<std::vector<rpy::ReadableReactionRecord>>
 read_reactions_obs(const std::string &filename, const std::string &name) {
-    readdy::io::BloscFilter bloscFilter;
+    readdy::io::Blosc2Filter bloscFilter;
     bloscFilter.registerFilter();
 
     auto f = h5rd::File::open(filename, h5rd::File::Flag::READ_ONLY);
@@ -426,7 +426,7 @@ using TopologyRecord = readdy::model::top::TopologyRecord;
 std::tuple<std::vector<readdy::TimeStep>, std::vector<std::vector<TopologyRecord>>>
 readTopologies(const std::string &filename, const std::string &groupName, std::size_t from,
                std::size_t to, std::size_t stride) {
-    readdy::io::BloscFilter bloscFilter;
+    readdy::io::Blosc2Filter bloscFilter;
     bloscFilter.registerFilter();
 
     std::vector<readdy::TimeStep> time;
@@ -568,7 +568,7 @@ readTopologies(const std::string &filename, const std::string &groupName, std::s
 }
 
 std::size_t trajectoryLength(const std::string &filename, const std::string &name) {
-    readdy::io::BloscFilter bloscFilter;
+    readdy::io::Blosc2Filter bloscFilter;
     bloscFilter.registerFilter();
 
     auto f = h5rd::File::open(filename, h5rd::File::Flag::READ_ONLY);
@@ -583,7 +583,7 @@ std::size_t trajectoryLength(const std::string &filename, const std::string &nam
 }
 
 std::vector<std::vector<TrajectoryParticle>> read_trajectory(const std::string &filename, const std::string &name) {
-    readdy::io::BloscFilter bloscFilter;
+    readdy::io::Blosc2Filter bloscFilter;
     bloscFilter.registerFilter();
 
     auto f = h5rd::File::open(filename, h5rd::File::Flag::READ_ONLY);
