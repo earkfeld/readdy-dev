@@ -63,6 +63,7 @@ class ReaDDyRecipe(ConanFile):
         # self.requires("c-blosc/1.21.0")
         self.requires("c-blosc2/2.17.0")
         self.requires("hdf5/1.14.5")
+        # self.requires("hdf5/1.8.17")
         # self.requires("zlib/1.2.11")
         # self.test_requires("nose/1.3.7")
 
