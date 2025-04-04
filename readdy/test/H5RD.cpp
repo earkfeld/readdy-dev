@@ -150,12 +150,12 @@ TEST_CASE("Check reading and writing of compound types with repeated opening and
 
     auto types = getCompoundTypes(f->parentFile());
 
-
     auto ds = group.createDataSet("stuffs", {3}, {UNLIMITED_DIMS}, std::get<0>(types), std::get<1>(types));
     {
         ds->append({stuffs.size()}, stuffs.data());
         ds->append({stuffs.size()}, stuffs.data());
         f->close();
+
         REQUIRE(f->closed());
 
         f.reset();
@@ -190,8 +190,6 @@ TEST_CASE("Check reading and writing of compound types with repeated opening and
     auto ds213 = gtest123.createDataSet("stuffs", {3}, {UNLIMITED_DIMS}, std::get<0>(types123), std::get<1>(types123));
     ds.reset();
     ds213->append({stuffs.size()}, stuffs.data());
-
-
 }
 
 TEST_CASE("Reading and writing of VLEN data set", "[vlen]") {

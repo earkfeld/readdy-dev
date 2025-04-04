@@ -63,7 +63,7 @@ public:
      * checks availability
      * @return true if available
      */
-    virtual bool available() const = 0;
+    [[nodiscard]] virtual bool available() const = 0;
 
     /**
      * Activate filter for a data set
@@ -94,7 +94,7 @@ public:
 
     ~SZIPFilter() override = default;
 
-    bool available() const override;
+    [[nodiscard]] bool available() const override;
 
     void activate(PropertyList &plist) override;
 
@@ -110,7 +110,7 @@ public:
 
     ~NBITFilter() override = default;
 
-    bool available() const override;
+    [[nodiscard]] bool available() const override;
 
     void activate(PropertyList &plist) override;
 
@@ -128,7 +128,7 @@ public:
 
     ~ScaleOffsetFilter() override = default;
 
-    bool available() const override;
+    [[nodiscard]] bool available() const override;
 
     void activate(PropertyList &plist) override;
 
@@ -144,7 +144,7 @@ public:
 
     ~ShuffleFilter() override = default;
 
-    bool available() const override;
+    [[nodiscard]] bool available() const override;
 
     void activate(PropertyList &plist) override;
 
@@ -156,7 +156,7 @@ public:
 
     ~Fletcher32Filter() override = default;
 
-    bool available() const override;
+    [[nodiscard]] bool available() const override;
 
     void activate(PropertyList &plist) override;
 

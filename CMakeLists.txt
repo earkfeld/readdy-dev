@@ -35,6 +35,7 @@
 if (POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
+cmake_minimum_required(VERSION 3.17)
 PROJECT(readdy_main VERSION 0.0 LANGUAGES C CXX)
 
 #####################################
@@ -79,7 +80,7 @@ set(READDY_BUILD_SCENARIOS OFF CACHE BOOL "Whether to build the Scenarios execut
 #####################################
 
 # minimum cmake version
-cmake_minimum_required(VERSION 3.16)
+
 
 # run conan
 #include(${CMAKE_SOURCE_DIR}/cmake/Conan.cmake)
@@ -182,9 +183,11 @@ else()
     find_package(pybind11 REQUIRED)
 endif()
 
+#find_package(pybind11 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(blosc REQUIRED)
+find_package(c-blosc2 REQUIRED)
+#find_package(blosc REQUIRED)
 find_package(fmt REQUIRED)
 
 set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -196,6 +199,7 @@ include(cmake/sources/sources_plugin.cmake)
 include(cmake/sources/kernels/singlecpu.cmake)
 include(cmake/sources/kernels/cpu.cmake)
 include(cmake/sources/sources_readdy.cmake)
+
 # create library
 message(STATUS "Libraries ReaDDy depends on: ${READDY_DEPENDENT_LIBRARIES}")
 message(STATUS "Include directories: ${READDY_INCLUDE_DIRS}")

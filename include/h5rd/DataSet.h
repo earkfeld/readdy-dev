@@ -74,7 +74,7 @@ public:
 
     void flush();
 
-    std::shared_ptr<DataSpace> getFileSpace() const;
+    [[nodiscard]] std::shared_ptr<DataSpace> getFileSpace() const;
 
     dimension &extensionDim();
 

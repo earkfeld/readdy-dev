@@ -49,6 +49,7 @@
 #include "macros.h"
 #include "logging.h"
 #include "ReaDDyVec3.h"
+#include <thread>
 
 namespace h5rd {
 class File;
