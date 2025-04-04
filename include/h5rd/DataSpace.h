@@ -49,7 +49,7 @@
 
 namespace h5rd {
 
-class DataSpace : public SubObject {
+class DataSpace final : public SubObject {
 public:
 
     // DataSpace();
@@ -60,11 +60,11 @@ public:
 
     ~DataSpace() override;
 
-    std::size_t ndim() const;
+    [[nodiscard]] std::size_t ndim() const;
 
-    dimensions dims() const;
+    [[nodiscard]] dimensions dims() const;
 
-    dimensions maxDims() const;
+    [[nodiscard]] dimensions maxDims() const;
 
     void close() override;
 };

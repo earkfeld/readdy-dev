@@ -68,9 +68,9 @@ public:
     template<typename T>
     std::shared_ptr<DataSet> getDataset(const std::string &name);
 
-    bool exists(const std::string &name) const;
+    [[nodiscard]] bool exists(const std::string &name) const;
 
-    group_info info() const;
+    [[nodiscard]] group_info info() const;
 
     template<typename T>
     void write(const std::string &dataSetName, const std::vector<T> &data);
@@ -135,7 +135,7 @@ public:
 
 private:
 
-    std::vector<std::string> subElements(H5O_type_t type) const;
+    [[nodiscard]] std::vector<std::string> subElements(H5O_type_t type) const;
 
     Container *me();
 

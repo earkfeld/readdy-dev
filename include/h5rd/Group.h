@@ -50,7 +50,7 @@
 
 namespace h5rd {
 
-class Group : public SubObject, public Node<Group> {
+class Group final : public SubObject, public Node<Group> {
 public:
     explicit Group(std::string path, ParentFileRef parentFile);
 

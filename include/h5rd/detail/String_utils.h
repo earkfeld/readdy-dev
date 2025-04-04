@@ -55,8 +55,8 @@
 #include <H5Tpublic.h>
 #include <H5Ppublic.h>
 
-namespace h5rd {
-namespace util {
+
+namespace h5rd::util {
 class WriteString {
 public:
     WriteString(hid_t dataset, hid_t datatype, hid_t dataspace, hid_t memspace)
@@ -111,4 +111,4 @@ inline void writeVector(hid_t group, const std::string &dsName, std::vector<std:
     H5Tclose(datatype);
 }
 }
-}
+
