@@ -35,6 +35,11 @@
 if (POLICY CMP0048)
     cmake_policy(SET CMP0048 NEW)
 endif (POLICY CMP0048)
+
+cmake_minimum_required(VERSION 3.17) # minimum cmake version
+SET(CMAKE_CXX_STANDARD 20) # we use c++20
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 PROJECT(readdy_main VERSION 0.0 LANGUAGES C CXX)
 
 #####################################
@@ -78,9 +83,6 @@ set(READDY_BUILD_SCENARIOS OFF CACHE BOOL "Whether to build the Scenarios execut
 #                                   #
 #####################################
 
-# minimum cmake version
-cmake_minimum_required(VERSION 3.16)
-
 # run conan
 #include(${CMAKE_SOURCE_DIR}/cmake/Conan.cmake)
 #run_conan()
@@ -113,9 +115,6 @@ message(STATUS "====================================================")
 message(STATUS "CMake configure for readdy version ${READDY_VERSION}-${READDY_BUILD_STRING}")
 message(STATUS "====================================================")
 
-# we use c++20
-SET(CMAKE_CXX_STANDARD 20)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 if(APPLE)
     set(CMAKE_MACOSX_RPATH TRUE)  # any shared lib being built has rpath enabled
 endif()
@@ -161,8 +160,9 @@ endif (READDY_LOG_CMAKE_CONFIGURATION)
 
 if (READDY_CREATE_TEST_TARGET)
     add_definitions(-DCATCH_CONFIG_NO_CPP17_UNCAUGHT_EXCEPTIONS)  # workaround for macos which chokes on some cpp17 stuff
-    add_subdirectory(contrib/Catch2)
-    include(${CMAKE_CURRENT_LIST_DIR}/contrib/Catch2/extras/Catch.cmake)
+#    add_subdirectory(contrib/Catch2)
+#    include(${CMAKE_CURRENT_LIST_DIR}/contrib/Catch2/extras/Catch.cmake)
+    find_package(Catch2 REQUIRED)
     add_subdirectory(readdy_testing)
 else()
     # disable testing if there was no submodule
@@ -176,16 +176,24 @@ endif()
 # readdy core                       #
 #                                   #
 #####################################
-if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/contrib/pybind11/CMakeLists.txt)
-    add_subdirectory(contrib/pybind11)
-else()
-    find_package(pybind11 REQUIRED)
-endif()
+#if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/contrib/pybind11/CMakeLists.txt)
+#    add_subdirectory(contrib/pybind11)
+#else()
+#    find_package(pybind11 REQUIRED)
+#endif()
+set(PYBIND11_FINDPYTHON ON)
+#set(HDF5_USE_STATIC_LIBRARIES ON)
 
+
+#find_package(lz4 REQUIRED)
+#find_package(Catch2 REQUIRED)
+#find_package(HDF5 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
+#find_package(c-blosc REQUIRED)
 find_package(blosc REQUIRED)
 find_package(fmt REQUIRED)
+find_package(pybind11 REQUIRED)
 
 set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
@@ -196,6 +204,7 @@ include(cmake/sources/sources_plugin.cmake)
 include(cmake/sources/kernels/singlecpu.cmake)
 include(cmake/sources/kernels/cpu.cmake)
 include(cmake/sources/sources_readdy.cmake)
+
 # create library
 message(STATUS "Libraries ReaDDy depends on: ${READDY_DEPENDENT_LIBRARIES}")
 message(STATUS "Include directories: ${READDY_INCLUDE_DIRS}")
@@ -206,6 +215,12 @@ set_target_properties(${READDY_PROJECT_NAME} PROPERTIES
         LINK_FLAGS "${EXTRA_LINK_FLAGS}"
         COMPILE_FLAGS "${EXTRA_COMPILE_FLAGS}")
 target_compile_definitions(${READDY_PROJECT_NAME} PUBLIC LIBRARY_EXPORTS=1)
+
+find_library(LZ4_LIB lz4 REQUIRED)
+target_link_libraries(readdy PRIVATE ${LZ4_LIB})
+
+#target_link_libraries(${READDY_PROJECT_NAME} PUBLIC ${HDF5_LIBRARIES})
+#target_include_directories(${READDY_PROJECT_NAME} PUBLIC ${HDF5_INCLUDE_DIRS})
 
 #####################################
 #                                   #

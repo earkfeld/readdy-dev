@@ -2,19 +2,19 @@ from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 
 class ReaDDyRecipe(ConanFile):
-    name = "readdy_main"
+    name = "readdy"
     version = "0.0"
     package_type = "application"
 
     # Optional metadata
-    license = "MIT"
-    author = "Computational Molecular Biology Group, Freie Universität Berlin"
     url = "https://github.com/readdy"
     description = "ReaDDy - Simulation software for particle-based reaction-diffusion systems"
     topics = ("reaction-diffusion", "mesoscale", "simulation", "molecular biology")
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
+
+    # generators = "CMakeDeps", "CMakeToolchain"
 
     # Sources
     exports_sources = (
@@ -56,16 +56,23 @@ class ReaDDyRecipe(ConanFile):
         cmake_layout(self)
 
     def requirements(self):
+        self.requires("pybind11/2.13.6")
+        self.requires("catch2/3.8.0")
         self.requires("spdlog/1.10.0")
         self.requires("nlohmann_json/3.10.3")
         self.requires("fmt/8.1.1")
-        # self.requires("fmt/11.0.2")
+        # self.requires("hdf5/1.14.3")
+
         # self.requires("c-blosc/1.21.0")
-        self.requires("c-blosc2/2.17.0")
-        self.requires("hdf5/1.14.5")
+
+        # self.requires("fmt/11.0.2")
+        # self.requires("c-blosc/2.17.0")
+
+        # self.requires("hdf5/1.8.21")
         # self.requires("hdf5/1.8.17")
         # self.requires("zlib/1.2.11")
         # self.test_requires("nose/1.3.7")
+        # self.requires("lz4/1.9.4")
 
     def configure(self):
         # Apply the header_only option to spdlog and fmt only

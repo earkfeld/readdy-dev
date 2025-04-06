@@ -75,16 +75,10 @@ void BloscFilter::activate(h5rd::PropertyList &plist) {
             cd_values[6] = BLOSC_LZ4HC;
             break;
         }
-//        case SNAPPY: {
-//            cd_values[6] = BLOSC_SNAPPY;
-//            break;
-//        }
-
-//        case SNAPPY: {
-//            cd_values[6] = BLOSC2_SNAPPY;
-//            break;
-//        }
-
+        case SNAPPY: {
+            cd_values[6] = BLOSC_SNAPPY;
+            break;
+        }
         case ZLIB: {
             cd_values[6] = BLOSC_ZLIB;
             break;

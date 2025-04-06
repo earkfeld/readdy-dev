@@ -1,13 +1,14 @@
 #!/bin/bash
 
 # Configuration
-PREFIX=~/miniforge3/envs/readdy-dev2
+#PREFIX=~/miniforge3/envs/readdy3
+PREFIX=/opt/homebrew/Caskroom/miniforge/base/envs/readdy3
 PROJECT_ROOT=$(pwd)
 BUILD_TYPE="Debug"
 PY3K=1
-PY_VER="3.10"
+PY_VER="3.11"
 RDY_VER="2.0.13"
-RUN_UNIT_TESTS=false
+RUN_UNIT_TESTS=true
 RUN_TEST_SIM=false
 
 BUILD_DIR="build"
@@ -53,7 +54,15 @@ if [ "$1" = "clang" ]; then
     CMAKE_FLAGS+=("-DCMAKE_CXX_COMPILER=/usr/bin/clang++")
 fi
 
-export HDF5_ROOT=${PREFIX}
+#export HDF5_ROOT=${PREFIX}
+#export HDF5_ROOT=/opt/homebrew/opt/hdf5
+#CMAKE_FLAGS+=("-DHDF5_ROOT=${HDF5_ROOT}")
+#export HDF5_PLUGIN_PATH=${PREFIX}/lib/hdf5/plugin
+#"/opt/homebrew/lib/hdf5/plugins"
+export HDF5_ROOT="${PREFIX}"
+#export HDF5_PLUGIN_PATH="${PREFIX}/lib" # <--- Debugging
+#export HDF5_PLUGIN_PATH=/opt/homebrew/Caskroom/miniforge/base/envs/readdy-dev2/lib
+
 export PYTHON_INCLUDE_DIR=$("$PREFIX/bin/python" -c "import sysconfig; print(sysconfig.get_path('include'))")
 
 # Attempt to feed the correct Python library to FindPythonLibs
@@ -88,6 +97,30 @@ CPU_COUNT=2
 # Set up directories (creating containing directories if necessary)
 mkdir -p "$BUILD_DIR"
 cd "$BUILD_DIR" || exit
+
+# Print all environment variables, flags, and paths for debugging
+echo "========================="
+echo "Environment Variables:"
+env
+echo ""
+echo "Variables:"
+echo "   PREFIX: $PREFIX"
+echo "   PROJECT_ROOT: $PROJECT_ROOT"
+echo "   BUILD_DIR: $BUILD_DIR"
+echo "   BUILD_TYPE: $BUILD_TYPE"
+echo "   CONAN_GEN_DIR: $CONAN_GEN_DIR"
+echo "   SITE_PACKAGES_DIR: $SITE_PACKAGES_DIR"
+echo "   PYTHON: $PYTHON"
+echo "   PYTHON_INCLUDE_DIR: $PYTHON_INCLUDE_DIR"
+echo "   PYTHON_LIBRARY: $lib_path"
+echo "   HDF5_ROOT: $HDF5_ROOT"
+echo "   HDF5_PLUGIN_PATH: $HDF5_PLUGIN_PATH"
+echo "========================="
+echo "========================="
+echo "CMake Flags:"
+for flag in "${CMAKE_FLAGS[@]}"; do
+    echo "   $flag"
+done
 
 # Run conan to get dependencies and set up the build environment
 conan install "$PROJECT_ROOT" --build=missing
