@@ -1,7 +1,8 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
+from conan.tools.cmake import CMake, cmake_layout
 
-class ReaDDyRecipe(ConanFile):
+
+class Recipe(ConanFile):
     name = "readdy"
     version = "0.0"
     package_type = "application"
@@ -9,18 +10,16 @@ class ReaDDyRecipe(ConanFile):
     # Optional metadata
     url = "https://github.com/readdy"
     description = "ReaDDy - Simulation software for particle-based reaction-diffusion systems"
-    topics = ("reaction-diffusion", "mesoscale", "simulation", "molecular biology")
+    topics = ("reaction-diffusion", "mesoscale", "simulation", "molecular biology", "iPRD")
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-
     generators = "CMakeDeps", "CMakeToolchain"
 
-    # Sources
     exports_sources = (
         "CMakeLists.txt",
         "src/*",
-        "contrib/*",
+        # "contrib/*", # Catch2 + Pybind11 now handled by conan
         "include/*",
         "wrappers/*",
         "kernels/*",
@@ -29,7 +28,6 @@ class ReaDDyRecipe(ConanFile):
         "cmake/sources/kernels/*"
     )
 
-    # Options for the user
     options = {
         "build_python_wrapper": [True, False],
         "build_mpi_kernel": [True, False],
@@ -61,7 +59,7 @@ class ReaDDyRecipe(ConanFile):
         self.requires("nlohmann_json/3.11.3")
         self.requires("spdlog/1.10.0")
         self.requires("fmt/8.1.1")
-        # self.requires("hdf5/1.14.3") # Debugging
+        # self.requires("hdf5/1.14.3") # Debugging pip packaging
 
         # TODO: Update code to use the latest versions of spdlog and fmt
         # self.requires("fmt/11.0.2")
@@ -71,7 +69,7 @@ class ReaDDyRecipe(ConanFile):
         # Apply the header_only option to spdlog and fmt only
         self.options["spdlog/*"].header_only = True
         self.options["fmt/*"].header_only = True
-        # self.options["hdf5"].hl = True  # This is the HL lib
+        # self.options["hdf5"].hl = True  # Debugging pip packaging
 
     def build(self):
         cmake = CMake(self)
@@ -82,5 +80,3 @@ class ReaDDyRecipe(ConanFile):
         cmake = CMake(self)
         cmake.install()
 
-    def package_info(self):
-        self.cpp_info.libs = ["readdy"]

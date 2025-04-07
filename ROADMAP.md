@@ -29,6 +29,7 @@
     - [ ] Per particle/topology observables
     - [ ] Temporal striding (e.g. memory for only last n steps, or observe every n steps)
     - [ ] Spatially defined (i.e. cutoff radius for localizing observables)
+      - Per species, distance, etc.
   - [ ] Generalized Action Factory (particle/topology actions)
     - [ ] position updates
     - [ ] force updates
