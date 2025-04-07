@@ -59,9 +59,9 @@ class ReaDDyRecipe(ConanFile):
         self.requires("pybind11/2.13.6")
         self.requires("catch2/3.8.0")
         self.requires("nlohmann_json/3.11.3")
-
         self.requires("spdlog/1.10.0")
         self.requires("fmt/8.1.1")
+        # self.requires("hdf5/1.14.3") # Debugging
 
         # TODO: Update code to use the latest versions of spdlog and fmt
         # self.requires("fmt/11.0.2")
@@ -71,6 +71,8 @@ class ReaDDyRecipe(ConanFile):
         # Apply the header_only option to spdlog and fmt only
         self.options["spdlog/*"].header_only = True
         self.options["fmt/*"].header_only = True
+        # self.options["hdf5"].hl = True  # This is the HL lib
+
     def build(self):
         cmake = CMake(self)
         cmake.configure()

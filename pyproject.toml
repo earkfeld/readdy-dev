@@ -20,17 +20,28 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
 ]
-dependencies = []
+dependencies = [
+    "blosc>=1.11.0",
+#    "hdf5>=1.14.3",
+    "h5py>=3.13.0",
+#    "numpy>=1.21",
+    "tqdm>=4.64.0",
+]
 
 [project.optional-dependencies]
 test = ["pytest>=7.2.0,<9"]
 
 [build-system]
 requires = [
-    "py-build-cmake>=0.5.0",
+    "py-build-cmake>=0.4.2",
     "pybind11-stubgen~=2.5.1",
+    "cmake>=3.16",
     "conan>=2.0",
-    "numpy>=1.21"
+    "ninja",
+    "blosc>=1.11.0",
+    "h5py>=3.13.0",
+#    "hdf5>=1.14.3",
+#    "numpy>=1.21",
 ]
 build-backend = "py_build_cmake.build"
 
@@ -53,19 +64,18 @@ include = [
 [tool.py-build-cmake.cmake]
 minimum_version = "3.25"
 build_path = "build"
-build_type = "Release"
-cmake-args = [
-    "-DREADDY_BUILD_PYTHON_WRAPPER=ON",
-    "-DREADDY_CREATE_TEST_TARGET=OFF",
-    "-DREADDY_INSTALL_UNIT_TEST_EXECUTABLE=OFF",
-    "-DREADDY_LOG_CMAKE_CONFIGURATION=ON",
-    "-DREADDY_GENERATE_DOCUMENTATION_TARGET=OFF",
-    "-DREADDY_BUILD_MPI_KERNEL=OFF",
-    "-DREADDY_BUILD_SHARED_COMBINED=OFF",
-    "-DCMAKE_CXX_FLAGS_RELEASE=-O3",
-    "-DCMAKE_C_FLAGS_RELEASE=-O3",
-    "-DPYTHON_EXECUTABLE=${python_executable}"
-]
+build_type = "Debug"
+
+[tool.py-build-cmake.cmake.options]
+READDY_BUILD_PYTHON_WRAPPER = true
+READDY_CREATE_TEST_TARGET = true
+READDY_INSTALL_UNIT_TEST_EXECUTABLE = false
+READDY_LOG_CMAKE_CONFIGURATION = true
+READDY_GENERATE_DOCUMENTATION_TARGET = false
+READDY_BUILD_MPI_KERNEL = false
+CMAKE_CXX_FLAGS_RELEASE = "-O3"
+CMAKE_C_FLAGS_RELEASE = "-O3"
+CMAKE_PREFIX_PATH = "build/generators"
 
 [tool.py-build-cmake.mac.cmake]
 generator = "Ninja Multi-Config"
@@ -84,7 +94,8 @@ test-command = "pytest {project}/test"
 [tool.cibuildwheel.macos]
 archs = ["arm64", "x86_64", "universal2"]
 before-build = [
-    "pip install cmake 'conan>=2,<3' ninja",
+#    "pip install cmake 'conan>=2,<3' ninja",
+    "pip install cmake 'conan>=2,<3' ninja blosc h5py",
     "conan profile detect -f",
     "rm -rf {package}/build",
     "python {package}/tools/ci/pre-build-macos.py"
@@ -93,7 +104,8 @@ before-build = [
 [tool.cibuildwheel.windows]
 archs = ["AMD64", "x86", "ARM64"]
 before-build = [
-    "python -m pip install cmake \"conan>=2,<3\" ninja",
+#    "python -m pip install cmake \"conan>=2,<3\" ninja",
+    "pip install cmake 'conan>=2,<3' ninja blosc h5py",
     "conan profile detect -f",
     "(if exist {package}\\build (rmdir /s /q {package}\\build))",
     "python {package}\\tools\\ci\\pre-build-windows.py"

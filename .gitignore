@@ -4,6 +4,10 @@ libraries/external
 # ignore notebook checkpoints
 /*/.ipynb_checkpoints
 
+# backup files and directory for stashing old file versions
+*.bak
+/archive
+
 # Compiled Object files
 *.slo
 *.lo
