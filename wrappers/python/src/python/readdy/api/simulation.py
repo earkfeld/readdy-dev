@@ -550,6 +550,7 @@ class Simulation(object):
         loop.evaluate_topology_reactions(self.evaluate_topology_reactions, timestep)
         loop.use_reaction_scheduler(self.reaction_handler)
         loop.evaluate_observables(self.evaluate_observables)
+
         if self.integrator == "MdgfrdIntegrator":
             loop.neighbor_list_cutoff = max(2. * self._simulation.context.calculate_max_cutoff(), loop.neighbor_list_cutoff)
         if self._skin > 0.:
@@ -588,7 +589,6 @@ class Simulation(object):
     def _run_custom_loop(self, custom_loop_function, show_summary=True):
         """
         Executes the simulation loop provided by argument, additionally takes care of preparing output file.
-
         :param custom_loop_function: function to be executed, should contain calls to actions
         :param show_summary: determines if system configuration is printed
         """
@@ -603,8 +603,8 @@ class Simulation(object):
 
         self._simulation.set_kernel_config(self.kernel_configuration.to_json())
 
-        # todo consider exposing enable_write_to_file as method of simulation (cpp and py),
-        # todo then we can delete this whole run_custom_loop method
+        # TODO consider exposing enable_write_to_file as method of simulation (cpp and py),
+        # TODO then we can delete this whole run_custom_loop method
         # the actions created by the loop internally are not used
         # the loop object here is merely used as convenient access to configuration
         # e.g. enable_write_to_file, write_config_to_file, run_initialize

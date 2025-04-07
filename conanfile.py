@@ -14,7 +14,7 @@ class ReaDDyRecipe(ConanFile):
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
 
-    # generators = "CMakeDeps", "CMakeToolchain"
+    generators = "CMakeDeps", "CMakeToolchain"
 
     # Sources
     exports_sources = (
@@ -58,34 +58,25 @@ class ReaDDyRecipe(ConanFile):
     def requirements(self):
         self.requires("pybind11/2.13.6")
         self.requires("catch2/3.8.0")
+        self.requires("nlohmann_json/3.11.3")
+
         self.requires("spdlog/1.10.0")
-        self.requires("nlohmann_json/3.10.3")
         self.requires("fmt/8.1.1")
-        # self.requires("hdf5/1.14.3")
 
-        # self.requires("c-blosc/1.21.0")
-
+        # TODO: Update code to use the latest versions of spdlog and fmt
         # self.requires("fmt/11.0.2")
-        # self.requires("c-blosc/2.17.0")
-
-        # self.requires("hdf5/1.8.21")
-        # self.requires("hdf5/1.8.17")
-        # self.requires("zlib/1.2.11")
-        # self.test_requires("nose/1.3.7")
-        # self.requires("lz4/1.9.4")
+        # self.requires("spdlog/1.15.0")
 
     def configure(self):
         # Apply the header_only option to spdlog and fmt only
         self.options["spdlog/*"].header_only = True
         self.options["fmt/*"].header_only = True
 
-    def generate(self):
-        deps = CMakeDeps(self)
-        deps.generate()
-        tc = CMakeToolchain(self)
-        # Explicitly set the architecture to x86_64
-        # tc.variables["CMAKE_SYSTEM_PROCESSOR"] = "x86_64"
-        tc.generate()
+    # def generate(self):
+    #     deps = CMakeDeps(self)
+    #     deps.generate()
+    #     tc = CMakeToolchain(self)
+    #     tc.generate()
 
     def build(self):
         cmake = CMake(self)

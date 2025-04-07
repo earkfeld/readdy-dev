@@ -59,11 +59,9 @@ set(READDY_INSTALL_HEADERS ON CACHE BOOL "Whether to install header files")
 
 # decide if api wrappers are being generated
 set(READDY_BUILD_PYTHON_WRAPPER ON CACHE BOOL "Build Python wrappers")
-#set(READDY_DEBUG_PYTHON_MODULES OFF CACHE BOOL "If this flag is set to ON, the compiled python modules get installed directly into the source tree.")
-set(READDY_DEBUG_CONDA_ROOT_DIR "" CACHE PATH "This only does something, if READDY_DEBUG_PYTHON_MODULES is set to ON. Then, it compiles the readdy libraries into the @conda@/lib directory.")
 
 set(READDY_DEBUG_PYTHON_MODULES ON CACHE BOOL "If this flag is set to ON, the compiled python modules get installed directly into the source tree.")
-#set(READDY_DEBUG_CONDA_ROOT_DIR ON CACHE PATH "This only does something, if READDY_DEBUG_PYTHON_MODULES is set to ON. Then, it compiles the readdy libraries into the @conda@/lib directory.")
+set(READDY_DEBUG_CONDA_ROOT_DIR "" CACHE PATH "This only does something, if READDY_DEBUG_PYTHON_MODULES is set to ON. Then, it compiles the readdy libraries into the @conda@/lib directory.")
 
 # documentation target (make doc)
 set(READDY_GENERATE_DOCUMENTATION_TARGET OFF CACHE BOOL "Should generate target for documentation or not.")
@@ -83,29 +81,18 @@ set(READDY_BUILD_SCENARIOS OFF CACHE BOOL "Whether to build the Scenarios execut
 #                                   #
 #####################################
 
-# run conan
-#include(${CMAKE_SOURCE_DIR}/cmake/Conan.cmake)
-#run_conan()
-#if (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake")
-#    include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
-#    conan_basic_setup(TARGETS)
-#else()
-#    message(STATUS "no conanbuildinfo.cmake was generated, continue and see if packages can be found
-#                    using find_package regardless")
-#endif()
-
-# extend cmake module path to include readdy custom modules
+# Extend cmake module path to include readdy custom modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules")
 
-# ensure that the build directory is not the source directory
+# Ensure that the build directory is not the source directory
 include(MacroOutOfSourceBuild)
 MACRO_ENSURE_OUT_OF_SOURCE_BUILD("${PROJECT_NAME} requires an out source build.")
 
-# makefile settings
+# Makefile settings
 SET(CMAKE_VERBOSE_MAKEFILE OFF)
 SET(CMAKE_COLOR_MAKEFILE ON)
 
-# version
+# Version
 set(READDY_VERSION "v0.0" CACHE STRING "The version")
 mark_as_advanced(READDY_VERSION)
 set(READDY_BUILD_STRING "dev" CACHE STRING "Build string")
@@ -119,10 +106,10 @@ if(APPLE)
     set(CMAKE_MACOSX_RPATH TRUE)  # any shared lib being built has rpath enabled
 endif()
 
-# always build readdy as shared lib
+# Always build readdy as shared lib
 SET(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libs" FORCE)
 
-# dir vars
+# Directory Variables
 SET(READDY_GLOBAL_DIR "${PROJECT_SOURCE_DIR}")
 SET(READDY_GLOBAL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include")
 
@@ -152,6 +139,9 @@ if (READDY_LOG_CMAKE_CONFIGURATION)
     include(LogConfiguration)
 endif (READDY_LOG_CMAKE_CONFIGURATION)
 
+set(PYBIND11_FINDPYTHON ON)
+set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
+
 #####################################
 #                                   #
 # setup testing                     #
@@ -160,15 +150,11 @@ endif (READDY_LOG_CMAKE_CONFIGURATION)
 
 if (READDY_CREATE_TEST_TARGET)
     add_definitions(-DCATCH_CONFIG_NO_CPP17_UNCAUGHT_EXCEPTIONS)  # workaround for macos which chokes on some cpp17 stuff
-#    add_subdirectory(contrib/Catch2)
-#    include(${CMAKE_CURRENT_LIST_DIR}/contrib/Catch2/extras/Catch.cmake)
     find_package(Catch2 REQUIRED)
     add_subdirectory(readdy_testing)
 else()
-    # disable testing if there was no submodule
-    SET(READDY_CREATE_TEST_TARGET OFF)
-    # no installation of test executable
-    SET(READDY_INSTALL_UNIT_TEST_EXECUTABLE OFF)
+    SET(READDY_CREATE_TEST_TARGET OFF) # disable testing if there was no submodule
+    SET(READDY_INSTALL_UNIT_TEST_EXECUTABLE OFF) # no installation of test executable
 endif()
 
 #####################################
@@ -176,27 +162,15 @@ endif()
 # readdy core                       #
 #                                   #
 #####################################
-#if (EXISTS ${CMAKE_CURRENT_LIST_DIR}/contrib/pybind11/CMakeLists.txt)
-#    add_subdirectory(contrib/pybind11)
-#else()
-#    find_package(pybind11 REQUIRED)
-#endif()
-set(PYBIND11_FINDPYTHON ON)
-#set(HDF5_USE_STATIC_LIBRARIES ON)
 
-
-#find_package(lz4 REQUIRED)
-#find_package(Catch2 REQUIRED)
-#find_package(HDF5 REQUIRED)
+# Dependencies
 find_package(spdlog REQUIRED)
 find_package(nlohmann_json REQUIRED)
-#find_package(c-blosc REQUIRED)
-find_package(blosc REQUIRED)
 find_package(fmt REQUIRED)
 find_package(pybind11 REQUIRED)
+find_package(blosc REQUIRED)
 
-set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
-
+# Set up includes for project modules
 include(cmake/sources/sources_common.cmake)
 include(cmake/sources/sources_io.cmake)
 include(cmake/sources/sources_model.cmake)
@@ -205,22 +179,23 @@ include(cmake/sources/kernels/singlecpu.cmake)
 include(cmake/sources/kernels/cpu.cmake)
 include(cmake/sources/sources_readdy.cmake)
 
-# create library
+# Create library
 message(STATUS "Libraries ReaDDy depends on: ${READDY_DEPENDENT_LIBRARIES}")
 message(STATUS "Include directories: ${READDY_INCLUDE_DIRS}")
+
 add_library(${READDY_PROJECT_NAME} ${READDY_ALL_SOURCES} ${READDY_GLOBAL_INCLUDE_DIR})
+
 target_include_directories(${READDY_PROJECT_NAME} PUBLIC ${READDY_INCLUDE_DIRS})
 target_link_libraries(${READDY_PROJECT_NAME} PUBLIC ${READDY_DEPENDENT_LIBRARIES})
+
 set_target_properties(${READDY_PROJECT_NAME} PROPERTIES
         LINK_FLAGS "${EXTRA_LINK_FLAGS}"
         COMPILE_FLAGS "${EXTRA_COMPILE_FLAGS}")
+
 target_compile_definitions(${READDY_PROJECT_NAME} PUBLIC LIBRARY_EXPORTS=1)
 
-find_library(LZ4_LIB lz4 REQUIRED)
-target_link_libraries(readdy PRIVATE ${LZ4_LIB})
-
-#target_link_libraries(${READDY_PROJECT_NAME} PUBLIC ${HDF5_LIBRARIES})
-#target_include_directories(${READDY_PROJECT_NAME} PUBLIC ${HDF5_INCLUDE_DIRS})
+#find_library(LZ4_LIB lz4 REQUIRED)
+#target_link_libraries(readdy PRIVATE ${LZ4_LIB})
 
 #####################################
 #                                   #
