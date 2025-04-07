@@ -71,13 +71,6 @@ class ReaDDyRecipe(ConanFile):
         # Apply the header_only option to spdlog and fmt only
         self.options["spdlog/*"].header_only = True
         self.options["fmt/*"].header_only = True
-
-    # def generate(self):
-    #     deps = CMakeDeps(self)
-    #     deps.generate()
-    #     tc = CMakeToolchain(self)
-    #     tc.generate()
-
     def build(self):
         cmake = CMake(self)
         cmake.configure()
